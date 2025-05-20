@@ -8,6 +8,15 @@ class EventsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Events'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home),
+            tooltip: 'Go to Home',
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/home');
+            },
+          ),
+        ],
       ),
       body: const Center(
         child: Text('Events Page Content'),

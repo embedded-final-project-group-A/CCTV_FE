@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'screens/signup.dart';
 import 'screens/signin.dart';
 import 'screens/home.dart';
-import 'screens/events.dart';  // events.dart 임포트
+import 'screens/events.dart';
+import 'screens/profile.dart';
+import 'screens/notifications.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +27,9 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpPage(),
         '/signin': (context) => const SignInPage(),
         '/home': (context) => const HomePage(),
-        '/events': (context) => const EventsPage(),  // /events 라우트 등록
+        '/notifications': (context) => const NotificationsPage(),
+        '/events': (context) => const EventsPage(),
+        '/profile': (context) => const ProfileScreen(),
       },
     );
   }
