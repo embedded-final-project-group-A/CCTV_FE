@@ -1,28 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'notifications.dart';
-
-void main() {
-  runApp(const FigmaToCodeApp());
-}
-
-class FigmaToCodeApp extends StatelessWidget {
-  const FigmaToCodeApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/home',
-      routes: {
-        '/home': (context) => const HomePage(),
-        '/events': (context) => const EventPage(),
-        '/notifications': (context) => const NotificationsPage(),
-        '/profile': (context) => const ProfilePage(),
-      },
-    );
-  }
-}
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -37,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, String>> cameraFeeds = [];
   bool isLoading = true;
 
-  final String storesApi = 'http://127.0.0.1:8000/api/user/stores?user_id=user1';
+  final String storesApi = 'http://10.0.2.2:8000/api/user/stores?user_id=user1';
 
   @override
   void initState() {
@@ -65,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchCamerasForStore(String store) async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/store/cameras?store=$store'));
+    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/store/cameras?store=$store'));
     if (response.statusCode == 200) {
       final List<dynamic> cams = jsonDecode(response.body);
       setState(() {
@@ -96,7 +74,6 @@ class _HomePageState extends State<HomePage> {
                   onStoreSelected: onStoreSelected,
                   cameraFeeds: cameraFeeds,
                 ),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
@@ -156,18 +133,6 @@ class HomeContent extends StatelessWidget {
       },
     );
   }
-
-  Widget _buildStatusBar(double width) {
-    return Positioned(
-      left: 0,
-      top: 0,
-      child: SizedBox(
-        width: width,
-        height: 32,
-        child: ColoredBox(color: Colors.black),
-      ),
-    );
-  }
 }
 
 class NotificationIcon extends StatelessWidget {
@@ -224,12 +189,12 @@ class GreetingSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: const Alignment(-0.6, 0), // 가운데보다 왼쪽으로 약간 치우치게 조정
+    return const Align(
+      alignment: Alignment(-0.6, 0), // 가운데보다 왼쪽으로 약간 치우치게 조정
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        children: const [
+        children: [
           Text(
             'Hi, Sabina!',
             style: TextStyle(fontSize: 16, color: Color(0xFF888888)),
@@ -311,7 +276,7 @@ class CameraFeeds extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6)],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 13), blurRadius: 6)],
       ),
       child: Stack(
         children: [
@@ -327,7 +292,7 @@ class CameraFeeds extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 128),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -346,62 +311,6 @@ class CameraFeeds extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      selectedItemColor: Colors.blueAccent,
-      unselectedItemColor: Colors.grey,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Events'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-      ],
-      onTap: (index) {
-        switch (index) {
-          case 0:
-            Navigator.pushReplacementNamed(context, '/home');
-            break;
-          case 1:
-            Navigator.pushReplacementNamed(context, '/events');
-            break;
-          case 2:
-            Navigator.pushReplacementNamed(context, '/profile');
-            break;
-        }
-      },
-    );
-  }
-}
-
-class EventPage extends StatelessWidget {
-  const EventPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Events")),
-      body: const Center(child: Text("Event Page")),
-      bottomNavigationBar: const BottomNavBar(),
-    );
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Profile")),
-      body: const Center(child: Text("Profile Page")),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

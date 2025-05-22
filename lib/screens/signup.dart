@@ -133,16 +133,16 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                Row(
+                const Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Divider(
                         color: Color(0xFFD9D9D9),
                         thickness: 1,
                         endIndent: 10,
                       ),
                     ),
-                    const Text(
+                    Text(
                       'Or continue with',
                       style: TextStyle(
                         color: Color(0xA3000000),
@@ -151,7 +151,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    const Expanded(
+                    Expanded(
                       child: Divider(
                         color: Color(0xFFD9D9D9),
                         thickness: 1,

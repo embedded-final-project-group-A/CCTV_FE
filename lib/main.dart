@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/signup.dart';
 import 'screens/signin.dart';
-import 'screens/home.dart';
-import 'screens/events.dart';
-import 'screens/profile.dart';
-import 'screens/notifications.dart';
+import 'wrappers/bottom_nav_wrapper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,10 +23,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/signup': (context) => const SignUpPage(),
         '/signin': (context) => const SignInPage(),
-        '/home': (context) => const HomePage(),
-        '/notifications': (context) => const NotificationsPage(),
-        '/events': (context) => const EventsPage(),
-        '/profile': (context) => const ProfileScreen(),
+        '/home': (context) => const BottomNavWrapper(currentIndex: 0),
+        '/events': (context) => const BottomNavWrapper(currentIndex: 1),
+        '/profile': (context) => const BottomNavWrapper(currentIndex: 2),
+        '/notifications': (context) => const BottomNavWrapper(currentIndex: 3),
       },
     );
   }

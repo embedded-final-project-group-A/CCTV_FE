@@ -6,6 +6,7 @@ class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Notifications'),
         centerTitle: true,
@@ -15,17 +16,17 @@ class NotificationsPage extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
-        children: [
+        children: const [
           _NotificationSection(
             date: 'Today',
-            notifications: const [
+            notifications: [
               NotificationItem(store: 'Store 1', camera: 'Camera 1', event: '폭행'),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           _NotificationSection(
             date: 'Yesterday',
-            notifications: const [
+            notifications: [
               NotificationItem(store: 'Store 3', camera: 'Camera 2', event: '건강이상'),
             ],
           ),
@@ -78,9 +79,10 @@ class _NotificationCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
       child: ListTile(
+        tileColor: Colors.white,
         leading: CircleAvatar(
           backgroundColor: Colors.pink[100],
-          child: Icon(Icons.videocam, color: Colors.black),
+          child: const Icon(Icons.videocam, color: Colors.black),
         ),
         title: Text('${item.store} - ${item.camera}',
             style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -100,34 +102,4 @@ class NotificationItem {
     required this.camera,
     required this.event,
   });
-}
-
-class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      selectedItemColor: Colors.blueAccent,
-      unselectedItemColor: Colors.grey,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Events'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-      ],
-      onTap: (index) {
-        switch (index) {
-          case 0:
-            Navigator.pushReplacementNamed(context, '/home');
-            break;
-          case 1:
-            Navigator.pushReplacementNamed(context, '/events');
-            break;
-          case 2:
-            Navigator.pushReplacementNamed(context, '/profile');
-            break;
-        }
-      },
-    );
-  }
 }
