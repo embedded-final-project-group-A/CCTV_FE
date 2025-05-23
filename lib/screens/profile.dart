@@ -83,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // 상단 빈 공간 또는 다른 위젯용 공간
-                        const SizedBox(height: 46),
+                        const SizedBox(height: 16),
 
                         // 오른쪽 상단 알림 아이콘
                         Align(
@@ -94,11 +94,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
 
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 39),
 
                         // TitleSection 사용
                         const TitleSection(),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 40),
 
                         // 프로필 박스
                         Container(
@@ -135,14 +135,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                         const SizedBox(height: 24),
 
-                        // 메뉴: Camera Registration
-                        _buildMenuItem(
-                          icon: Icons.camera_alt_outlined,
-                          title: 'Camera Registration',
-                          onTap: () => Navigator.pushNamed(context, '/camera_registration'),
-                        ),
-                        const SizedBox(height: 12),
-
                         // 토글: Alarm
                         _buildToggleItem(
                           icon: Icons.alarm,
@@ -153,6 +145,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               isAlarmOn = val;
                             });
                           },
+                        ),
+                        const SizedBox(height: 12),
+
+                        // 메뉴: Camera Registration
+                        _buildMenuItem(
+                          icon: Icons.camera_alt_outlined,
+                          title: 'Camera Registration',
+                          onTap: () => Navigator.pushNamed(context, '/camera_registration'),
                         ),
                         const SizedBox(height: 12),
 
@@ -173,20 +173,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
 
                         const SizedBox(height: 32),
-
-                        // (선택적으로) 카메라 목록 표시
-                        if (cameraFeeds.isNotEmpty)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Camera Feeds', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 12),
-                              ...cameraFeeds.map((cam) => ListTile(
-                                    leading: Image.network(cam["imageUrl"] ?? '', width: 48, height: 48, fit: BoxFit.cover),
-                                    title: Text(cam["label"] ?? ''),
-                                  )),
-                            ],
-                          )
                       ],
                     ),
                   ),

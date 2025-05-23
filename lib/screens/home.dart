@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:video_player/video_player.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, String>> cameraFeeds = [];
   bool isLoading = true;
 
-  final String storesApi = 'http://10.0.2.2:8000/api/user/stores?user_id=user1';
+  final String _storesApi = 'http://10.0.2.2:8000';
 
   @override
   void initState() {
@@ -25,7 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchUserStores() async {
     try {
-      final response = await http.get(Uri.parse(storesApi));
+      final response = await http.get(Uri.parse('$_storesApi/api/user/stores?user_id=user1'));
       if (response.statusCode == 200) {
         final List<dynamic> stores = jsonDecode(response.body);
         setState(() {
@@ -43,13 +44,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchCamerasForStore(String store) async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/store/cameras?store=$store'));
+    final response = await http.get(Uri.parse('$_storesApi/api/store/cameras?store=$store'));
     if (response.statusCode == 200) {
       final List<dynamic> cams = jsonDecode(response.body);
       setState(() {
         cameraFeeds = cams.map<Map<String, String>>((e) => {
           "label": e["label"].toString(),
           "imageUrl": e["image_url"].toString(),
+          "videoUrl": e["video_url"].toString(),
         }).toList();
       });
     }
@@ -71,6 +73,7 @@ class _HomePageState extends State<HomePage> {
               ? const Center(child: Text('Please Register Your Store'))
               : HomeContent(
                   userStores: userStores,
+                  selectedStore: selectedStore,
                   onStoreSelected: onStoreSelected,
                   cameraFeeds: cameraFeeds,
                 ),
@@ -82,12 +85,14 @@ class HomeContent extends StatelessWidget {
   final List<String> userStores;
   final Function(String) onStoreSelected;
   final List<Map<String, String>> cameraFeeds;
+  final String? selectedStore;
 
   const HomeContent({
     super.key,
     required this.userStores,
     required this.onStoreSelected,
     required this.cameraFeeds,
+    required this.selectedStore,
   });
 
   @override
@@ -98,16 +103,12 @@ class HomeContent extends StatelessWidget {
 
         return Container(
           width: width,
-          height: 837,
           color: const Color(0xFFFDFDFD),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), // 좌우, 상하 여백
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // 좌측 정렬
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
               const SizedBox(height: 16),
-
-              // 오른쪽 상단 알림 아이콘
               Align(
                 alignment: Alignment.topRight,
                 child: GestureDetector(
@@ -115,17 +116,15 @@ class HomeContent extends StatelessWidget {
                   child: const NotificationIcon(),
                 ),
               ),
-
               const SizedBox(height: 16),
-
               const GreetingSection(),
-
               const SizedBox(height: 32),
-
-              StoreSelector(userStores: userStores, onStoreSelected: onStoreSelected),
-
+              StoreSelector(
+                userStores: userStores,
+                selectedStore: selectedStore,
+                onStoreSelected: onStoreSelected,
+              ),
               const SizedBox(height: 20),
-
               CameraFeeds(cameraFeeds: cameraFeeds),
             ],
           ),
@@ -140,45 +139,32 @@ class NotificationIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topRight,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8, right: 16),
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click, // 커서를 손 모양으로 변경
-          child: GestureDetector(
-            onTap: () => Navigator.pushNamed(context, '/notifications'),
-            child: Stack(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F8),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Icon(
-                    Icons.notifications,
-                    size: 24,
-                    color: Colors.grey,
-                  ),
-                ),
-                Positioned(
-                  right: 6,
-                  top: 6,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFBBD04),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                )
-              ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, right: 16),
+      child: Stack(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF2F4F8),
+              borderRadius: BorderRadius.circular(20),
             ),
+            child: const Icon(Icons.notifications, size: 24, color: Colors.grey),
           ),
-        ),
+          Positioned(
+            right: 6,
+            top: 6,
+            child: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFBBD04),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -190,7 +176,7 @@ class GreetingSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Align(
-      alignment: Alignment(-0.6, 0), // 가운데보다 왼쪽으로 약간 치우치게 조정
+      alignment: Alignment(-0.6, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -212,9 +198,10 @@ class GreetingSection extends StatelessWidget {
 
 class StoreSelector extends StatelessWidget {
   final List<String> userStores;
+  final String? selectedStore;
   final Function(String) onStoreSelected;
 
-  const StoreSelector({super.key, required this.userStores, required this.onStoreSelected});
+  const StoreSelector({super.key, required this.userStores, required this.selectedStore, required this.onStoreSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -226,17 +213,28 @@ class StoreSelector extends StatelessWidget {
           spacing: 12,
           runSpacing: 12,
           children: userStores.map((store) {
+            final isSelected = store == selectedStore;
+            final screenWidth = MediaQuery.of(context).size.width;
+            final itemWidth = (screenWidth - 32 - (12 * 3)) / 4; // 4개 + 3개 spacing
+
             return GestureDetector(
               onTap: () => onStoreSelected(store),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                width: itemWidth,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEEF2F7),
+                  color: isSelected ? const Color(0xFF3B71FE) : const Color(0xFFEEF2F7),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   store,
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF3B71FE)),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isSelected ? Colors.white : const Color(0xFF3B71FE),
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
                 ),
               ),
             );
@@ -255,61 +253,123 @@ class CameraFeeds extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = (screenWidth - 16 * 2 - 12) / 2; // 좌우 padding + 간격 고려
+    final cardWidth = (screenWidth - 16 * 2 - 12);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Wrap(
         spacing: 12,
         runSpacing: 16,
-        children: cameraFeeds
-            .map((cam) => _cameraCard(cam['label']!, cam['imageUrl']!, cardWidth))
-            .toList(),
+        children: cameraFeeds.map((cam) => _cameraCard(cam, cardWidth, context)).toList(),
       ),
     );
   }
 
-  Widget _cameraCard(String label, String imageUrl, double width) {
-    return Container(
-      width: width,
-      height: 180,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 13), blurRadius: 6)],
+  Widget _cameraCard(Map<String, String> cam, double width, BuildContext context) {
+    final label = cam['label'] ?? '';
+    final imageUrl = cam['imageUrl'] ?? '';
+    final videoUrl = cam['videoUrl'] ?? '';
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (_) => FullScreenVideoPage(videoUrl: videoUrl),
+        ));
+      },
+      child: Container(
+        width: width,
+        height: 180,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [BoxShadow(color: Colors.black.withAlpha(13), blurRadius: 6)],
+        ),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: imageUrl.isNotEmpty
+                    ? Image.network(imageUrl, fit: BoxFit.cover, errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image))
+                    : const Center(child: Icon(Icons.videocam_off, size: 48)),
+              ),
+            ),
+            Positioned(
+              left: 12,
+              bottom: 12,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(128),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Container(width: 8, height: 8, decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4))),
+                    const SizedBox(width: 6),
+                    Text(label, style: const TextStyle(fontSize: 14, color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+            const Positioned(
+              right: 12,
+              top: 12,
+              child: Icon(Icons.more_vert, color: Colors.black54),
+            ),
+          ],
+        ),
       ),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(imageUrl, fit: BoxFit.cover),
-            ),
-          ),
-          Positioned(
-            left: 12,
-            bottom: 12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 128),
-                borderRadius: BorderRadius.circular(20),
+    );
+  }
+}
+
+class FullScreenVideoPage extends StatefulWidget {
+  final String videoUrl;
+
+  const FullScreenVideoPage({super.key, required this.videoUrl});
+
+  @override
+  State<FullScreenVideoPage> createState() => _FullScreenVideoPageState();
+}
+
+class _FullScreenVideoPageState extends State<FullScreenVideoPage> {
+  late VideoPlayerController _controller;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
+      ..initialize().then((_) {
+        setState(() {
+          _isLoading = false;
+          _controller.setLooping(true);
+          _controller.play();
+        });
+      }).catchError((e) {
+        debugPrint('Video init error: \$e');
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(backgroundColor: Colors.transparent, iconTheme: const IconThemeData(color: Colors.white)),
+      body: Center(
+        child: _isLoading
+            ? const CircularProgressIndicator()
+            : AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: VideoPlayer(_controller),
               ),
-              child: Row(
-                children: [
-                  Container(width: 8, height: 8, decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4))),
-                  const SizedBox(width: 6),
-                  Text(label, style: const TextStyle(fontSize: 14, color: Colors.white)),
-                ],
-              ),
-            ),
-          ),
-          const Positioned(
-            right: 12,
-            top: 12,
-            child: Icon(Icons.more_vert, color: Colors.black54),
-          ),
-        ],
       ),
     );
   }
