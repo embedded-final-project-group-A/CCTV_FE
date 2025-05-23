@@ -104,8 +104,8 @@ class HomeContent extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start, // 좌측 정렬
             children: [
-              // 상단 검정바 대신 그냥 빈 공간 또는 필요시 다른 위젯 넣기
-              const SizedBox(height: 32),
+              
+              const SizedBox(height: 16),
 
               // 오른쪽 상단 알림 아이콘
               Align(
@@ -116,7 +116,7 @@ class HomeContent extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               const GreetingSection(),
 
@@ -124,7 +124,7 @@ class HomeContent extends StatelessWidget {
 
               StoreSelector(userStores: userStores, onStoreSelected: onStoreSelected),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               CameraFeeds(cameraFeeds: cameraFeeds),
             ],
@@ -196,7 +196,7 @@ class GreetingSection extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Hi, Sabina!',
+            'Hi, Hasanova!',
             style: TextStyle(fontSize: 16, color: Color(0xFF888888)),
           ),
           SizedBox(height: 8),

@@ -16,10 +16,10 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
   late int _selectedIndex;
 
   final List<Widget> _pages = [
-    const HomePage(),
-    const EventsPage(),
-    const ProfilePage(),
-    const NotificationsPage(),
+    const HomePage(),           // index 0
+    const NotificationsPage(),  // index 1
+    const EventsPage(),         // index 2
+    const ProfilePage(),        // index 3
   ];
 
   @override
@@ -41,15 +41,31 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
         index: _selectedIndex,
         children: _pages,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Events'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifications'),
-        ],
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            top: BorderSide(
+              color: Colors.grey,   // 회색 선 색상
+              width: 0.5,           // 선 두께
+            ),
+          ),
+        ),
+        padding: const EdgeInsets.only(top: 8),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.black54,
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),         
+            BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifications'),
+            BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Events'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          ],
+        ),
       ),
     );
   }
