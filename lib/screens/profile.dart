@@ -16,7 +16,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = true;
   bool isAlarmOn = true;
 
-  final String storesApi = 'http://10.0.2.2:8000/api/user/stores?user_id=user1';
+  final String _storesApi = 'http://localhost:8000';
 
   @override
   void initState() {
@@ -26,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> fetchUserStores() async {
     try {
-      final response = await http.get(Uri.parse(storesApi));
+      final response = await http.get(Uri.parse('$_storesApi/api/user/stores?user_id=user1'));
       if (response.statusCode == 200) {
         final List<dynamic> stores = jsonDecode(response.body);
         setState(() {
@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> fetchCamerasForStore(String store) async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/store/cameras?store=$store'));
+    final response = await http.get(Uri.parse('$_storesApi/api/store/cameras?store=$store'));
     if (response.statusCode == 200) {
       final List<dynamic> cams = jsonDecode(response.body);
       setState(() {
@@ -70,6 +70,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final contentWidth = screenWidth - 120;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: isLoading
@@ -78,98 +81,120 @@ class _ProfilePageState extends State<ProfilePage> {
               ? const Center(child: Text('Please Register Your Store'))
               : SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                    padding: const EdgeInsets.symmetric(vertical: 32),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // 상단 빈 공간 또는 다른 위젯용 공간
                         const SizedBox(height: 16),
 
-                        // 오른쪽 상단 알림 아이콘
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(context, '/events'),
-                            child: const NotificationIcon(),
+                        // 알림 아이콘 오른쪽 정렬 (full width)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.pushNamed(context, '/events'),
+                                child: const NotificationIcon(),
+                              ),
+                            ],
                           ),
                         ),
 
                         const SizedBox(height: 39),
 
-                        // TitleSection 사용
+                        // 제목 (full width, 가운데 정렬)
                         const TitleSection(),
                         const SizedBox(height: 40),
 
-                        // 프로필 박스
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF3F6FB),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 24,
-                                backgroundImage: AssetImage('assets/images/profile.png'),
-                              ),
-                              const SizedBox(width: 12),
-                              const Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Aytac Hasanova', style: TextStyle(fontWeight: FontWeight.bold)),
-                                    Text('aytac.hasan@gmail.com'),
-                                  ],
+                        // 사용자 정보 박스 가로 길이 제한 적용
+                        Center(
+                          child: Container(
+                            width: contentWidth,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF3F6FB),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                const CircleAvatar(
+                                  radius: 24,
+                                  backgroundImage: AssetImage('assets/images/profile.png'),
                                 ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.edit, size: 18),
-                                onPressed: () {
-                                  // 편집 기능 추가 예정
-                                },
-                              )
-                            ],
+                                const SizedBox(width: 12),
+                                const Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Aytac Hasanova', style: TextStyle(fontWeight: FontWeight.bold)),
+                                      Text('aytac.hasan@gmail.com'),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.edit, size: 18),
+                                  onPressed: () {
+                                    // 편집 기능 예정
+                                  },
+                                )
+                              ],
+                            ),
                           ),
                         ),
 
                         const SizedBox(height: 24),
 
-                        // 토글: Alarm
-                        _buildToggleItem(
-                          icon: Icons.alarm,
-                          title: 'Alarm',
-                          value: isAlarmOn,
-                          onChanged: (val) {
-                            setState(() {
-                              isAlarmOn = val;
-                            });
-                          },
+                        // Alarm 토글 가로 길이 제한 적용
+                        Center(
+                          child: Container(
+                            width: contentWidth,
+                            child: _buildToggleItem(
+                              icon: Icons.alarm,
+                              title: 'Alarm',
+                              value: isAlarmOn,
+                              onChanged: (val) {
+                                setState(() {
+                                  isAlarmOn = val;
+                                });
+                              },
+                            ),
+                          ),
                         ),
+
                         const SizedBox(height: 12),
 
-                        // 메뉴: Camera Registration
-                        _buildMenuItem(
-                          icon: Icons.camera_alt_outlined,
-                          title: 'Camera Registration',
-                          onTap: () => Navigator.pushNamed(context, '/camera_registration'),
-                        ),
-                        const SizedBox(height: 12),
+                        // 메뉴 아이템들 가로 길이 제한 적용
+                        Center(
+                          child: Container(
+                            width: contentWidth,
+                            child: Column(
+                              children: [
+                                _buildMenuItem(
+                                  icon: Icons.camera_alt_outlined,
+                                  title: 'Camera Registration',
+                                  onTap: () => Navigator.pushNamed(context, '/camera_registration'),
+                                ),
 
-                        // 메뉴: Support
-                        _buildMenuItem(
-                          icon: Icons.help_outline,
-                          iconColor: Colors.red,
-                          title: 'Support',
-                          onTap: () => Navigator.pushNamed(context, '/support'),
-                        ),
-                        const SizedBox(height: 12),
+                                const SizedBox(height: 12),
 
-                        // 메뉴: About us
-                        _buildMenuItem(
-                          icon: Icons.info_outline,
-                          title: 'About us',
-                          onTap: () => Navigator.pushNamed(context, '/about'),
+                                _buildMenuItem(
+                                  icon: Icons.help_outline,
+                                  iconColor: Colors.red,
+                                  title: 'Support',
+                                  onTap: () => Navigator.pushNamed(context, '/support'),
+                                ),
+
+                                const SizedBox(height: 12),
+
+                                _buildMenuItem(
+                                  icon: Icons.info_outline,
+                                  title: 'About us',
+                                  onTap: () => Navigator.pushNamed(context, '/about'),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
 
                         const SizedBox(height: 32),
@@ -193,7 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300), // 회색 테두리 추가
+          border: Border.all(color: Colors.grey.shade300),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         child: Row(
@@ -219,7 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300), // 동일한 회색 테두리
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: Row(
         children: [
@@ -227,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(width: 16),
           Expanded(child: Text(title)),
           Transform.scale(
-            scale: 0.85, // Switch 크기 줄이기 (세로 높이 맞추기)
+            scale: 0.85,
             child: Switch(value: value, onChanged: onChanged),
           ),
         ],
@@ -242,15 +267,17 @@ class TitleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Align(
-      alignment: Alignment.center, // 중앙 정렬
+      alignment: Alignment.center,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 8),
           Text(
             'Profile',
-            style: TextStyle(fontSize: 22, color: Color(0xFF222222), fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 22,
+              color: Color(0xFF222222),
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -267,7 +294,7 @@ class NotificationIcon extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 8, right: 16),
         child: MouseRegion(
-          cursor: SystemMouseCursors.click, // 커서를 손 모양으로 변경
+          cursor: SystemMouseCursors.click,
           child: GestureDetector(
             onTap: () => Navigator.pushNamed(context, '/notifications'),
             child: Stack(

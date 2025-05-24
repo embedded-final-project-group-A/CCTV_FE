@@ -135,7 +135,7 @@ class HomeContent extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/events'),
+                  onTap: () => Navigator.pushNamed(context, '/notifications'),
                   child: const NotificationIcon(),
                 ),
               ),
@@ -241,10 +241,7 @@ class StoreSelector extends StatelessWidget {
           children: userStores.map((store) {
             final isSelected = store == selectedStore;
             final screenWidth = MediaQuery.of(context).size.width;
-            // 유동적인 개수보다는 명시적으로 2개씩 배치되도록 재계산합니다.
-            // 16*2 (양쪽 패딩), 12 (아이템 간 간격)
-            final itemWidth = (screenWidth - 32 - 12) / 2;
-
+            final itemWidth = (screenWidth - 120 - (12 * 3)) / 4;
 
             return GestureDetector(
               onTap: () => onStoreSelected(store),
@@ -283,8 +280,7 @@ class CameraFeeds extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    // 카드 너비를 화면 너비에 맞춰 조정합니다. (양쪽 패딩 16px 제외)
-    final cardWidth = screenWidth - 32;
+    final cardWidth = screenWidth - 120; 
 
     // 만약 cameraFeeds가 비어있다면, 'No camera feeds available' 메시지를 표시합니다.
     if (cameraFeeds.isEmpty) {
@@ -313,7 +309,9 @@ class CameraFeeds extends StatelessWidget {
           final cam = cameraFeeds[index];
           return Padding(
             padding: const EdgeInsets.only(bottom: 16), // 각 카드 사이의 수직 간격
-            child: _cameraCard(cam, cardWidth, context),
+            child: Center(
+              child: _cameraCard(cam, cardWidth, context),
+            ),
           );
         },
       ),
