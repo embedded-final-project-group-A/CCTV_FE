@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -15,49 +16,90 @@ class _ProfilePageState extends State<ProfilePage> {
   List<Map<String, String>> cameraFeeds = [];
   bool isLoading = true;
   bool isAlarmOn = true;
+  String? userId;
 
   final String _storesApi = 'http://localhost:8000';
+
+  UserProfile? userProfile;
 
   @override
   void initState() {
     super.initState();
-    fetchUserStores();
+    _loadUserIdAndFetchStores();
   }
 
-  Future<void> fetchUserStores() async {
+  Future<void> _loadUserIdAndFetchStores() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString('user_id');
+
+    if (userId != null && userId!.isNotEmpty) {
+      await fetchUserProfile(userId!);
+      await fetchUserStores(userId!);
+    } else {
+      debugPrint("No user_id found in SharedPreferences");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchUserProfile(String userId) async {
     try {
-      final response = await http.get(Uri.parse('$_storesApi/api/user/stores?user_id=user1'));
+      final response = await http.get(Uri.parse('$_storesApi/api/user/profile?user_id=$userId'));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+        setState(() {
+          userProfile = UserProfile.fromJson(jsonData);
+        });
+      } else {
+        debugPrint('Failed to fetch user profile: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error fetching user profile: $e');
+    }
+  }
+
+  Future<void> fetchUserStores(String userId) async {
+    try {
+      final response = await http.get(Uri.parse('$_storesApi/api/user/stores?user_id=$userId'));
       if (response.statusCode == 200) {
         final List<dynamic> stores = jsonDecode(response.body);
         setState(() {
           userStores = stores.cast<String>();
           selectedStore = stores.isNotEmpty ? stores[0] : null;
-          isLoading = false;
         });
         if (selectedStore != null) {
-          fetchCamerasForStore(selectedStore!);
+          await fetchCamerasForStore(selectedStore!);
         }
       } else {
-        setState(() => isLoading = false);
+        debugPrint('Error fetching stores: Status code ${response.statusCode}');
       }
     } catch (e) {
-      setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load stores.')),
-      );
+      debugPrint('Error fetching stores: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   Future<void> fetchCamerasForStore(String store) async {
-    final response = await http.get(Uri.parse('$_storesApi/api/store/cameras?store=$store'));
-    if (response.statusCode == 200) {
-      final List<dynamic> cams = jsonDecode(response.body);
-      setState(() {
-        cameraFeeds = cams.map<Map<String, String>>((e) => {
-          "label": e["label"].toString(),
-          "imageUrl": e["image_url"].toString(),
-        }).toList();
-      });
+    try {
+      final response = await http.get(Uri.parse('$_storesApi/api/store/cameras?store=$store'));
+      if (response.statusCode == 200) {
+        final List<dynamic> cams = jsonDecode(response.body);
+        setState(() {
+          cameraFeeds = cams.map<Map<String, String>>((e) => {
+                "label": e["label"]?.toString() ?? "Unknown",
+                "imageUrl": e["imageUrl"]?.toString() ?? "",
+                "videoUrl": e["videoUrl"]?.toString() ?? "",
+              }).toList();
+        });
+      } else {
+        debugPrint('Failed to fetch cameras for store $store: Status code ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error fetching cameras: $e');
     }
   }
 
@@ -123,12 +165,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                   backgroundImage: AssetImage('assets/images/profile.png'),
                                 ),
                                 const SizedBox(width: 12),
-                                const Expanded(
+                                Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Aytac Hasanova', style: TextStyle(fontWeight: FontWeight.bold)),
-                                      Text('aytac.hasan@gmail.com'),
+                                      Text(
+                                        userProfile?.username ?? 'Loading...',
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(userProfile?.email ?? ''),
                                     ],
                                   ),
                                 ),
@@ -164,12 +209,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
                         const SizedBox(height: 12),
 
-                        // 메뉴 아이템들 가로 길이 제한 적용
                         Center(
                           child: Container(
                             width: contentWidth,
                             child: Column(
                               children: [
+                                _buildMenuItem(
+                                  icon: Icons.store_mall_directory,
+                                  title: 'Store Registration',
+                                  onTap: () => Navigator.pushNamed(context, '/store_registration'),
+                                ),
+
+                                const SizedBox(height: 12),
+
                                 _buildMenuItem(
                                   icon: Icons.camera_alt_outlined,
                                   title: 'Camera Registration',
@@ -197,7 +249,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
 
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 5),
                       ],
                     ),
                   ),
@@ -220,7 +272,7 @@ class _ProfilePageState extends State<ProfilePage> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey.shade300),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: [
             Icon(icon, color: iconColor),
@@ -240,7 +292,7 @@ class _ProfilePageState extends State<ProfilePage> {
     required ValueChanged<bool> onChanged,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -257,6 +309,26 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class UserProfile {
+  final int id;
+  final String username;
+  final String email;
+
+  UserProfile({
+    required this.id,
+    required this.username,
+    required this.email,
+  });
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      id: json['id'],
+      username: json['username'],
+      email: json['email'],
     );
   }
 }

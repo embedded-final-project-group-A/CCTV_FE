@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -10,9 +12,38 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool agreeToTerms = false;
+
+  Future<void> _signupUser() async {
+    final uri = Uri.parse('http://localhost:8000/signup'); // 실제 서버 주소로 변경
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'username': _usernameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'password': _passwordController.text.trim(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // 성공적으로 가입
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Account created successfully!')),
+        );
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        _showError(context, 'Sign-up failed: ${response.body}');
+      }
+    } catch (e) {
+      _showError(context, 'Error connecting to server: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +59,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 32),
                 const Text(
                   'Sign up',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 10),
                 const Text(
@@ -39,6 +67,20 @@ class _SignUpPageState extends State<SignUpPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 40),
+                _buildInputField(
+                  label: 'Username',
+                  controller: _usernameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Username is required';
+                    }
+                    if (value.length < 3) {
+                      return 'Username must be at least 3 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
                 _buildInputField(
                   label: 'Email',
                   controller: _emailController,
@@ -88,15 +130,17 @@ class _SignUpPageState extends State<SignUpPage> {
                             TextSpan(
                               text: 'Terms & Conditions ',
                               style: TextStyle(
-                                  color: Color(0xFF4EB7D9),
-                                  fontWeight: FontWeight.bold),
+                                color: Color(0xFF4EB7D9),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             TextSpan(text: 'and '),
                             TextSpan(
                               text: 'Privacy Policy',
                               style: TextStyle(
-                                  color: Color(0xFF4EB7D9),
-                                  fontWeight: FontWeight.bold),
+                                color: Color(0xFF4EB7D9),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -121,7 +165,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       }
 
                       if (isValid) {
-                        Navigator.pushReplacementNamed(context, '/home');
+                        _signupUser();
                       } else {
                         _showError(context, 'Please fix the errors above.');
                       }
@@ -167,25 +211,19 @@ class _SignUpPageState extends State<SignUpPage> {
                     _buildSocialButton(
                       icon: Icons.g_mobiledata,
                       label: 'Google',
-                      onPressed: () {
-                        // Google 로그인 로직
-                      },
+                      onPressed: () {},
                     ),
                     const SizedBox(width: 12),
                     _buildSocialButton(
                       icon: Icons.apple,
                       label: 'Apple',
-                      onPressed: () {
-                        // Apple 로그인 로직
-                      },
+                      onPressed: () {},
                     ),
                     const SizedBox(width: 12),
                     _buildSocialButton(
                       icon: Icons.facebook,
                       label: 'Facebook',
-                      onPressed: () {
-                        // Facebook 로그인 로직
-                      },
+                      onPressed: () {},
                     ),
                   ],
                 ),
@@ -198,8 +236,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       TextSpan(
                         text: 'Sign in',
                         style: const TextStyle(
-                            color: Color(0xFF4EB7D9),
-                            fontWeight: FontWeight.bold),
+                          color: Color(0xFF4EB7D9),
+                          fontWeight: FontWeight.bold,
+                        ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             Navigator.pushNamed(context, '/signin');
@@ -236,8 +275,7 @@ class _SignUpPageState extends State<SignUpPage> {
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide:
-              const BorderSide(color: Color(0xFF477DD0), width: 2.0),
+          borderSide: const BorderSide(color: Color(0xFF477DD0), width: 2.0),
           borderRadius: BorderRadius.circular(10),
         ),
         border: OutlineInputBorder(

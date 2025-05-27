@@ -1,27 +1,8 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:flutter/gestures.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Sign In',
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SignInPage(),
-        '/home': (context) => const Scaffold(body: Center(child: Text('Home Page'))),
-        '/signup': (context) => const Scaffold(body: Center(child: Text('Sign Up Page'))),
-        '/forgot-password': (context) => const ForgotPasswordPage(),
-      },
-    );
-  }
-}
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -33,6 +14,41 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  bool _isLoading = false;
+
+  Future<void> _signIn() async {
+    final isValid = _formKey.currentState!.validate();
+    if (!isValid) return;
+
+    setState(() => _isLoading = true);
+
+    final url = Uri.parse('http://localhost:8000/login');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'identifier': _emailController.text.trim(),
+        'password': _passwordController.text,
+      }),
+    );
+
+    setState(() => _isLoading = false);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final userId = data['user_id'];
+      if (userId == null) {
+        _showError(context, 'user_id is missing from server response');
+        return;
+      }
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_id', userId.toString());
+      
+      // 예: 로그인 성공 후 이동
+      Navigator.pushReplacementNamed(context, '/home');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +73,14 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 const SizedBox(height: 40),
                 _buildInputField(
-                  label: 'Email',
+                  label: 'Email or Username',
                   controller: _emailController,
                   validator: (value) {
-                    if (value == null || value.isEmpty) return 'Email is required';
+                    if (value == null || value.isEmpty) return 'Email or username is required';
                     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                    if (!emailRegex.hasMatch(value)) return 'Enter a valid email';
+                    if (!emailRegex.hasMatch(value) && value.contains(' ')) {
+                      return 'Username should not contain spaces';
+                    }
                     return null;
                   },
                 ),
@@ -80,16 +98,10 @@ class _SignInPageState extends State<SignInPage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/forgot-password');
-                    },
+                    onPressed: () => Navigator.pushNamed(context, '/forgot-password'),
                     child: const Text(
                       'Forgot Password?',
-                      style: TextStyle(
-                        color: Color(0xFF4EB7D9),
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(color: Color(0xFF4EB7D9), fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -98,71 +110,33 @@ class _SignInPageState extends State<SignInPage> {
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF477DD0),
-                    ),
-                    onPressed: () {
-                      final isValid = _formKey.currentState!.validate();
-                      if (isValid) {
-                        Navigator.pushReplacementNamed(context, '/home');
-                      } else {
-                        _showError(context, 'Please fix the errors above.');
-                      }
-                    },
-                    child: const Text(
-                      'Sign In',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF477DD0)),
+                    onPressed: _isLoading ? null : _signIn,
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text('Sign In', style: TextStyle(color: Colors.white)),
                   ),
                 ),
                 const SizedBox(height: 40),
                 const Row(
                   children: [
-                    Expanded(
-                      child: Divider(
-                        color: Color(0xFFD9D9D9),
-                        thickness: 1,
-                        endIndent: 10,
-                      ),
-                    ),
+                    Expanded(child: Divider(color: Color(0xFFD9D9D9), thickness: 1, endIndent: 10)),
                     Text(
                       'Or continue with',
-                      style: TextStyle(
-                        color: Color(0xA3000000),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: TextStyle(color: Color(0xA3000000), fontSize: 14),
                     ),
-                    Expanded(
-                      child: Divider(
-                        color: Color(0xFFD9D9D9),
-                        thickness: 1,
-                        indent: 10,
-                      ),
-                    ),
+                    Expanded(child: Divider(color: Color(0xFFD9D9D9), thickness: 1, indent: 10)),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildSocialButton(
-                      icon: Icons.g_mobiledata,
-                      label: 'Google',
-                      onPressed: () {},
-                    ),
+                    _buildSocialButton(icon: Icons.g_mobiledata, label: 'Google', onPressed: () {}),
                     const SizedBox(width: 12),
-                    _buildSocialButton(
-                      icon: Icons.apple,
-                      label: 'Apple',
-                      onPressed: () {},
-                    ),
+                    _buildSocialButton(icon: Icons.apple, label: 'Apple', onPressed: () {}),
                     const SizedBox(width: 12),
-                    _buildSocialButton(
-                      icon: Icons.facebook,
-                      label: 'Facebook',
-                      onPressed: () {},
-                    ),
+                    _buildSocialButton(icon: Icons.facebook, label: 'Facebook', onPressed: () {}),
                   ],
                 ),
                 const SizedBox(height: 30),
@@ -173,14 +147,8 @@ class _SignInPageState extends State<SignInPage> {
                       const TextSpan(text: 'Don\'t have an account? '),
                       TextSpan(
                         text: 'Sign up',
-                        style: const TextStyle(
-                          color: Color(0xFF4EB7D9),
-                          fontWeight: FontWeight.bold,
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.pushNamed(context, '/signup');
-                          },
+                        style: const TextStyle(color: Color(0xFF4EB7D9), fontWeight: FontWeight.bold),
+                        recognizer: TapGestureRecognizer()..onTap = () => Navigator.pushNamed(context, '/signup'),
                       ),
                     ],
                   ),
@@ -216,9 +184,7 @@ class _SignInPageState extends State<SignInPage> {
           borderSide: const BorderSide(color: Color(0xFF477DD0), width: 2.0),
           borderRadius: BorderRadius.circular(10),
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -252,11 +218,7 @@ Widget _buildSocialButton({
         shadowColor: Colors.black26,
         elevation: 3,
       ),
-      child: Icon(
-        icon,
-        size: 24,
-        color: Colors.black87,
-      ),
+      child: Icon(icon, size: 24, color: Colors.black87),
     ),
   );
 }
@@ -265,8 +227,6 @@ class ForgotPasswordPage extends StatelessWidget {
   const ForgotPasswordPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Forgot Password Page')),
-    );
+    return const Scaffold(body: Center(child: Text('Forgot Password Page')));
   }
 }

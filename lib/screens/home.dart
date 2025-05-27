@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:video_player/video_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,27 +16,33 @@ class _HomePageState extends State<HomePage> {
   String? selectedStore;
   List<Map<String, String>> cameraFeeds = [];
   bool isLoading = true;
+  String? userId;
 
-  // *** 중요: 이 부분을 http://localhost:8000 으로 수정합니다! ***
   final String _storesApi = 'http://localhost:8000';
 
   @override
   void initState() {
     super.initState();
-    fetchUserStores();
+    _loadUserIdAndFetchStores();
   }
 
-  @override
-  void dispose() {
-    // VideoPlayerController는 FullScreenVideoPage에서만 관리되므로
-    // HomePageState 에서는 dispose할 컨트롤러가 없습니다.
-    super.dispose();
+  Future<void> _loadUserIdAndFetchStores() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString('user_id');
+
+    if (userId != null && userId!.isNotEmpty) {
+      await fetchUserStores(userId!);
+    } else {
+      debugPrint("No user_id found in SharedPreferences");
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
-  Future<void> fetchUserStores() async {
+  Future<void> fetchUserStores(String userId) async {
     try {
-      final response =
-          await http.get(Uri.parse('$_storesApi/api/user/stores?user_id=user1'));
+      final response = await http.get(Uri.parse('$_storesApi/api/user/stores?user_id=$userId'));
       if (response.statusCode == 200) {
         final List<dynamic> stores = jsonDecode(response.body);
         setState(() {
@@ -59,18 +66,15 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchCamerasForStore(String store) async {
     try {
-      final response =
-          await http.get(Uri.parse('$_storesApi/api/store/cameras?store=$store'));
+      final response = await http.get(Uri.parse('$_storesApi/api/store/cameras?store=$store'));
       if (response.statusCode == 200) {
         final List<dynamic> cams = jsonDecode(response.body);
         setState(() {
           cameraFeeds = cams.map<Map<String, String>>((e) => {
-                "label": e["label"]?.toString() ?? "Unknown",
-                // 백엔드에서 제공하는 'imageUrl' 키를 사용합니다.
-                "imageUrl": e["imageUrl"]?.toString() ?? "",
-                // 백엔드에서 제공하는 'videoUrl' 키를 사용합니다.
-                "videoUrl": e["videoUrl"]?.toString() ?? "",
-              }).toList();
+            "label": e["label"]?.toString() ?? "Unknown",
+            "imageUrl": e["imageUrl"]?.toString() ?? "",
+            "videoUrl": e["videoUrl"]?.toString() ?? "",
+          }).toList();
         });
       } else {
         debugPrint('Failed to fetch cameras for store $store: Status code ${response.statusCode}');
@@ -148,7 +152,6 @@ class HomeContent extends StatelessWidget {
                 onStoreSelected: onStoreSelected,
               ),
               const SizedBox(height: 20),
-              // CameraFeeds 위젯이 ListView.builder를 사용하여 스크롤 가능하게 합니다.
               Expanded(
                 child: CameraFeeds(cameraFeeds: cameraFeeds),
               ),
@@ -246,7 +249,7 @@ class StoreSelector extends StatelessWidget {
             return GestureDetector(
               onTap: () => onStoreSelected(store),
               child: Container(
-                width: itemWidth, // 계산된 너비 적용
+                width: itemWidth,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
@@ -271,7 +274,6 @@ class StoreSelector extends StatelessWidget {
   }
 }
 
-
 class CameraFeeds extends StatelessWidget {
   final List<Map<String, String>> cameraFeeds;
 
@@ -280,9 +282,8 @@ class CameraFeeds extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = screenWidth - 120; 
+    final cardWidth = screenWidth - 120;
 
-    // 만약 cameraFeeds가 비어있다면, 'No camera feeds available' 메시지를 표시합니다.
     if (cameraFeeds.isEmpty) {
       return const SizedBox(
         width: double.infinity,
@@ -300,15 +301,15 @@ class CameraFeeds extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0), // HomeContent에서 이미 좌우 패딩을 줬으므로 여기서는 0
-      child: ListView.builder( // 스크롤이 필요한 경우 ListView.builder 사용
-        shrinkWrap: true, // 부모의 Column/Expanded 내에서 사용 시 필요
-        physics: const ClampingScrollPhysics(), // 스크롤 물리 효과 (선택 사항)
+      padding: const EdgeInsets.symmetric(horizontal: 0),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
         itemCount: cameraFeeds.length,
         itemBuilder: (context, index) {
           final cam = cameraFeeds[index];
           return Padding(
-            padding: const EdgeInsets.only(bottom: 16), // 각 카드 사이의 수직 간격
+            padding: const EdgeInsets.only(bottom: 16),
             child: Center(
               child: _cameraCard(cam, cardWidth, context),
             ),
@@ -320,8 +321,8 @@ class CameraFeeds extends StatelessWidget {
 
   Widget _cameraCard(Map<String, String> cam, double width, BuildContext context) {
     final label = cam['label'] ?? 'Unknown Camera';
-    final imageUrl = cam['imageUrl'] ?? ''; // 백엔드에서 제공하는 imageUrl
-    final videoUrl = cam['videoUrl'] ?? ''; // 백엔드에서 제공하는 videoUrl
+    final imageUrl = cam['imageUrl'] ?? '';
+    final videoUrl = cam['videoUrl'] ?? '';
 
     return GestureDetector(
       onTap: () {
@@ -348,17 +349,16 @@ class CameraFeeds extends StatelessWidget {
             Positioned.fill(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                // imageUrl이 비어있지 않다면 Image.network로 표시, 아니면 기본 아이콘
                 child: imageUrl.isNotEmpty
                     ? Image.network(
                         imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                           debugPrint('Image load error for URL: $imageUrl. Error: $error');
-                           return const Icon(Icons.broken_image, size: 48, color: Colors.grey); // 이미지 로드 실패 시
+                          debugPrint('Image load error for URL: $imageUrl. Error: $error');
+                          return const Icon(Icons.broken_image, size: 48, color: Colors.grey);
                         },
                       )
-                    : const Center(child: Icon(Icons.videocam_off, size: 48, color: Colors.grey)), // imageUrl 없을 시
+                    : const Center(child: Icon(Icons.videocam_off, size: 48, color: Colors.grey)),
               ),
             ),
             Positioned(
@@ -417,9 +417,8 @@ class _FullScreenVideoPageState extends State<FullScreenVideoPage> {
       }).catchError((e) {
         debugPrint('Video initialization error for URL: ${widget.videoUrl}. Error: $e');
         setState(() {
-          _isLoading = false; // 로딩 중단
+          _isLoading = false;
         });
-        // 에러 발생 시 사용자에게 알림
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to load video: ${e.toString()}'),

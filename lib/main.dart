@@ -5,6 +5,7 @@ import 'wrappers/bottom_nav_wrapper.dart';
 import 'screens/camera_registration.dart';
 import 'screens/aboutus.dart';
 import 'screens/support.dart';
+import 'screens/store_registration.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/notifications': (context) => const BottomNavWrapper(currentIndex: 1),
         '/events': (context) => const BottomNavWrapper(currentIndex: 2),
         '/profile': (context) => const BottomNavWrapper(currentIndex: 3),
+        '/store_registration': (context) => const StoreRegistrationPage(),
         '/camera_registration': (context) => const CameraRegistrationPage(),
         '/about': (context) => const AboutPage(),
         '/support': (context) => const SupportPage(),

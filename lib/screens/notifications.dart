@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class NotificationsPage extends StatefulWidget {
@@ -14,12 +15,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
   bool isLoading = true;
 
   final String apiUrl = 'http://localhost:8000/alerts/';
+  final String storageKey = 'cached_notifications';
 
   @override
   void initState() {
     super.initState();
-    fetchNotifications();
-    // 10초마다 새 알림 갱신
+    loadCachedNotifications();
+    fetchNotifications(); // 서버에서 최신 알림 불러오기
     Future.delayed(const Duration(seconds: 10), _periodicFetch);
   }
 
@@ -28,15 +30,41 @@ class _NotificationsPageState extends State<NotificationsPage> {
     Future.delayed(const Duration(seconds: 10), _periodicFetch);
   }
 
+  Future<void> loadCachedNotifications() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? cachedData = prefs.getString(storageKey);
+
+    if (cachedData != null) {
+      try {
+        final List<dynamic> jsonList = jsonDecode(cachedData);
+        setState(() {
+          notifications =
+              jsonList.map((json) => NotificationItem.fromJson(json)).toList();
+          isLoading = false;
+        });
+      } catch (e) {
+        debugPrint('Failed to decode cached notifications: $e');
+      }
+    }
+  }
+
+  Future<void> cacheNotifications(List<NotificationItem> items) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String jsonString = jsonEncode(items.map((e) => e.toJson()).toList());
+    await prefs.setString(storageKey, jsonString);
+  }
+
   Future<void> fetchNotifications() async {
     try {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
+        final fetchedItems = data.map((json) => NotificationItem.fromJson(json)).toList();
         setState(() {
-          notifications = data.map((json) => NotificationItem.fromJson(json)).toList();
+          notifications = fetchedItems;
           isLoading = false;
         });
+        cacheNotifications(fetchedItems);
       } else {
         setState(() => isLoading = false);
       }
@@ -48,12 +76,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  // 날짜별로 알림 그룹핑
   Map<String, List<NotificationItem>> groupNotificationsByDate() {
     Map<String, List<NotificationItem>> grouped = {};
     for (var notification in notifications) {
-      final date = notification.timestamp.split('T')[0]; // YYYY-MM-DD
-      if (grouped[date] == null) grouped[date] = [];
+      final date = notification.timestamp.split('T')[0];
+      grouped.putIfAbsent(date, () => []);
       grouped[date]!.add(notification);
     }
     return grouped;
@@ -116,7 +143,7 @@ class _NotificationSection extends StatelessWidget {
             Text(date, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
             TextButton(
               onPressed: () {
-                // TODO: 전체 알림 삭제 기능 구현
+                // TODO: Clear all notifications of this date
               },
               child: const Text('Clear all', style: TextStyle(fontSize: 14)),
             ),
@@ -147,33 +174,43 @@ class _NotificationCard extends StatelessWidget {
           backgroundColor: Colors.pink[100],
           child: const Icon(Icons.videocam, color: Colors.black),
         ),
-        title: Text('${item.store} - ${item.camera}',
+        title: Text('Store: ${item.storeId} - Camera: ${item.cameraId}',
             style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(item.event),
+        subtitle: Text(item.message),
       ),
     );
   }
 }
 
+
 class NotificationItem {
-  final String store;
-  final String camera;
-  final String event;
+  final String storeId;
+  final int cameraId;
+  final String message;
   final String timestamp;
 
   NotificationItem({
-    required this.store,
-    required this.camera,
-    required this.event,
+    required this.storeId,
+    required this.cameraId,
+    required this.message,
     required this.timestamp,
   });
 
   factory NotificationItem.fromJson(Map<String, dynamic> json) {
     return NotificationItem(
-      store: json['store'],
-      camera: json['camera'],
-      event: json['event'],
+      storeId: json['store_id'],
+      cameraId: json['camera_id'],
+      message: json['message'],
       timestamp: json['timestamp'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'store_id': storeId,
+      'camera_id': cameraId,
+      'message': message,
+      'timestamp': timestamp,
+    };
   }
 }
