@@ -71,9 +71,9 @@ class _HomePageState extends State<HomePage> {
         final List<dynamic> cams = jsonDecode(response.body);
         setState(() {
           cameraFeeds = cams.map<Map<String, String>>((e) => {
-            "label": e["label"]?.toString() ?? "Unknown",
-            "imageUrl": e["imageUrl"]?.toString() ?? "",
-            "videoUrl": e["videoUrl"]?.toString() ?? "",
+            "label": e["name"]?.toString() ?? "Unknown", // 수정: name
+            "imageUrl": e["image_url"]?.toString() ?? "", // 수정: image_url
+            "videoUrl": e["video_url"]?.toString() ?? "", // 수정: video_url
           }).toList();
         });
       } else {
@@ -285,37 +285,30 @@ class CameraFeeds extends StatelessWidget {
     final cardWidth = screenWidth - 120;
 
     if (cameraFeeds.isEmpty) {
-      return const SizedBox(
-        width: double.infinity,
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text(
-              'No camera feeds available for this store.',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Text(
+            'No camera feeds available for this store.',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+            textAlign: TextAlign.center,
           ),
         ),
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0),
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const ClampingScrollPhysics(),
-        itemCount: cameraFeeds.length,
-        itemBuilder: (context, index) {
-          final cam = cameraFeeds[index];
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Center(
-              child: _cameraCard(cam, cardWidth, context),
-            ),
-          );
-        },
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: cameraFeeds.length,
+      itemBuilder: (context, index) {
+        final cam = cameraFeeds[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Center(
+            child: _cameraCard(cam, cardWidth, context),
+          ),
+        );
+      },
     );
   }
 
@@ -350,14 +343,7 @@ class CameraFeeds extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: imageUrl.isNotEmpty
-                    ? Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          debugPrint('Image load error for URL: $imageUrl. Error: $error');
-                          return const Icon(Icons.broken_image, size: 48, color: Colors.grey);
-                        },
-                      )
+                    ? Image.network(imageUrl, fit: BoxFit.cover)
                     : const Center(child: Icon(Icons.videocam_off, size: 48, color: Colors.grey)),
               ),
             ),
@@ -378,11 +364,6 @@ class CameraFeeds extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-            const Positioned(
-              right: 12,
-              top: 12,
-              child: Icon(Icons.more_vert, color: Colors.black54),
             ),
           ],
         ),
@@ -415,16 +396,10 @@ class _FullScreenVideoPageState extends State<FullScreenVideoPage> {
           _controller.play();
         });
       }).catchError((e) {
-        debugPrint('Video initialization error for URL: ${widget.videoUrl}. Error: $e');
+        debugPrint('Video initialization error: $e');
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to load video: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
       });
   }
 
@@ -454,10 +429,7 @@ class _FullScreenVideoPageState extends State<FullScreenVideoPage> {
                     aspectRatio: _controller.value.aspectRatio,
                     child: VideoPlayer(_controller),
                   )
-                : const Text(
-                    'Video not available.',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
+                : const Text('Video not available.', style: TextStyle(color: Colors.white)),
       ),
     );
   }
