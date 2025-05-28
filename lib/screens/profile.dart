@@ -119,141 +119,133 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.white,
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : userStores.isEmpty
-              ? const Center(child: Text('Please Register Your Store'))
-              : SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 16),
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 16),
 
-                        // 알림 아이콘 오른쪽 정렬 (full width)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () => Navigator.pushNamed(context, '/events'),
-                                child: const NotificationIcon(),
-                              ),
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () => Navigator.pushNamed(context, '/events'),
+                            child: const NotificationIcon(),
                           ),
-                        ),
-
-                        const SizedBox(height: 39),
-
-                        // 제목 (full width, 가운데 정렬)
-                        const TitleSection(),
-                        const SizedBox(height: 40),
-
-                        // 사용자 정보 박스 가로 길이 제한 적용
-                        Center(
-                          child: Container(
-                            width: contentWidth,
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF3F6FB),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                const CircleAvatar(
-                                  radius: 24,
-                                  backgroundImage: AssetImage('assets/images/profile.png'),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        userProfile?.username ?? 'Loading...',
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(userProfile?.email ?? ''),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.edit, size: 18),
-                                  onPressed: () {
-                                    // 편집 기능 예정
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Alarm 토글 가로 길이 제한 적용
-                        Center(
-                          child: Container(
-                            width: contentWidth,
-                            child: _buildToggleItem(
-                              icon: Icons.alarm,
-                              title: 'Alarm',
-                              value: isAlarmOn,
-                              onChanged: (val) {
-                                setState(() {
-                                  isAlarmOn = val;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        Center(
-                          child: Container(
-                            width: contentWidth,
-                            child: Column(
-                              children: [
-                                _buildMenuItem(
-                                  icon: Icons.store_mall_directory,
-                                  title: 'Store Registration',
-                                  onTap: () => Navigator.pushNamed(context, '/store_registration'),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                _buildMenuItem(
-                                  icon: Icons.camera_alt_outlined,
-                                  title: 'Camera Registration',
-                                  onTap: () => Navigator.pushNamed(context, '/camera_registration'),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                _buildMenuItem(
-                                  icon: Icons.help_outline,
-                                  iconColor: Colors.red,
-                                  title: 'Support',
-                                  onTap: () => Navigator.pushNamed(context, '/support'),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                _buildMenuItem(
-                                  icon: Icons.info_outline,
-                                  title: 'About us',
-                                  onTap: () => Navigator.pushNamed(context, '/about'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 5),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(height: 39),
+                    const TitleSection(),
+                    const SizedBox(height: 40),
+
+                    Center(
+                      child: Container(
+                        width: contentWidth,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F6FB),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const CircleAvatar(
+                              radius: 24,
+                              backgroundImage: AssetImage('assets/images/profile.png'),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userProfile?.username ?? 'Loading...',
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(userProfile?.email ?? ''),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit, size: 18),
+                              onPressed: () {
+                                // 편집 기능 예정
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    Center(
+                      child: Container(
+                        width: contentWidth,
+                        child: _buildToggleItem(
+                          icon: Icons.alarm,
+                          title: 'Alarm',
+                          value: isAlarmOn,
+                          onChanged: (val) {
+                            setState(() {
+                              isAlarmOn = val;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Center(
+                      child: Container(
+                        width: contentWidth,
+                        child: Column(
+                          children: [
+                            _buildMenuItem(
+                              icon: Icons.store_mall_directory,
+                              title: 'Store Registration',
+                              onTap: () => Navigator.pushNamed(context, '/store_registration'),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildMenuItem(
+                              icon: Icons.camera_alt_outlined,
+                              title: 'Camera Registration',
+                              onTap: () => Navigator.pushNamed(context, '/camera_registration'),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildMenuItem(
+                              icon: Icons.help_outline,
+                              iconColor: Colors.red,
+                              title: 'Support',
+                              onTap: () => Navigator.pushNamed(context, '/support'),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildMenuItem(
+                              icon: Icons.info_outline,
+                              title: 'About us',
+                              onTap: () => Navigator.pushNamed(context, '/about'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    if (userStores.isEmpty)
+                      const Text('No stores registered yet. Please register one.'),
+
+                    const SizedBox(height: 5),
+                  ],
                 ),
+              ),
+            ),
     );
   }
 

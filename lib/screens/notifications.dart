@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:video_player/video_player.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -14,7 +15,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   List<NotificationItem> notifications = [];
   bool isLoading = true;
 
-  final String apiUrl = 'http://localhost:8000/alerts/';
+  final String apiUrl = 'http://localhost:8000/api/user/alerts/';
   final String storageKey = 'cached_notifications';
 
   @override
@@ -70,16 +71,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
       }
     } catch (e) {
       setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load notifications')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to load notifications')),
+        );
+      }
     }
   }
 
   Map<String, List<NotificationItem>> groupNotificationsByDate() {
     Map<String, List<NotificationItem>> grouped = {};
     for (var notification in notifications) {
-      final date = notification.timestamp.split('T')[0];
+      final date = notification.eventTime.split('T')[0];
       grouped.putIfAbsent(date, () => []);
       grouped[date]!.add(notification);
     }
@@ -162,6 +165,19 @@ class _NotificationCard extends StatelessWidget {
 
   const _NotificationCard({required this.item});
 
+  String getTypeDescription(int typeId) {
+    switch (typeId) {
+      case 1:
+        return 'Motion detected';
+      case 2:
+        return 'Person detected';
+      case 3:
+        return 'Sound detected';
+      default:
+        return 'Unknown event type';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -176,32 +192,106 @@ class _NotificationCard extends StatelessWidget {
         ),
         title: Text('Store: ${item.storeId} - Camera: ${item.cameraId}',
             style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(item.message),
+        subtitle: Text(getTypeDescription(item.typeId)),
+        onTap: () {
+          if (item.videoUrl != null && item.videoUrl!.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => VideoPlayerPage(videoUrl: item.videoUrl!),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No video available for this notification')),
+            );
+          }
+        },
       ),
     );
   }
 }
 
+class VideoPlayerPage extends StatefulWidget {
+  final String videoUrl;
+
+  const VideoPlayerPage({required this.videoUrl, Key? key}) : super(key: key);
+
+  @override
+  State<VideoPlayerPage> createState() => _VideoPlayerPageState();
+}
+
+class _VideoPlayerPageState extends State<VideoPlayerPage> {
+  late VideoPlayerController _controller;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.network(widget.videoUrl)
+      ..initialize().then((_) {
+        setState(() {
+          _isInitialized = true;
+        });
+        _controller.play();
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Video Player')),
+      backgroundColor: Colors.black,
+      body: Center(
+        child: _isInitialized
+            ? AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: VideoPlayer(_controller),
+              )
+            : const CircularProgressIndicator(),
+      ),
+      floatingActionButton: _isInitialized
+          ? FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  _controller.value.isPlaying ? _controller.pause() : _controller.play();
+                });
+              },
+              child: Icon(_controller.value.isPlaying ? Icons.pause : Icons.play_arrow),
+            )
+          : null,
+    );
+  }
+}
 
 class NotificationItem {
-  final String storeId;
+  final int storeId;
   final int cameraId;
-  final String message;
-  final String timestamp;
+  final int typeId;
+  final String eventTime;
+  final String? videoUrl;
 
   NotificationItem({
     required this.storeId,
     required this.cameraId,
-    required this.message,
-    required this.timestamp,
+    required this.typeId,
+    required this.eventTime,
+    this.videoUrl,
   });
 
   factory NotificationItem.fromJson(Map<String, dynamic> json) {
     return NotificationItem(
       storeId: json['store_id'],
       cameraId: json['camera_id'],
-      message: json['message'],
-      timestamp: json['timestamp'],
+      typeId: json['type_id'],
+      eventTime: json['event_time'],
+      videoUrl: json['video_url'],
     );
   }
 
@@ -209,8 +299,9 @@ class NotificationItem {
     return {
       'store_id': storeId,
       'camera_id': cameraId,
-      'message': message,
-      'timestamp': timestamp,
+      'type_id': typeId,
+      'event_time': eventTime,
+      'video_url': videoUrl,
     };
   }
 }

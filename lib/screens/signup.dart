@@ -34,9 +34,16 @@ class _SignUpPageState extends State<SignUpPage> {
       if (response.statusCode == 200) {
         // 성공적으로 가입
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account created successfully!')),
+          const SnackBar(
+            content: Text('Account created successfully! Please sign in.'),
+            duration: Duration(seconds: 2),
+          ),
         );
-        Navigator.pushReplacementNamed(context, '/home');
+
+        // 2초 후 signin 페이지로 이동
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pushReplacementNamed(context, '/signin');
+        });
       } else {
         _showError(context, 'Sign-up failed: ${response.body}');
       }

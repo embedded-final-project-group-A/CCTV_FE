@@ -94,6 +94,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : userStores.isEmpty
@@ -211,7 +212,7 @@ class GreetingSection extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Hi, Hasanova!',
+            'Welcome!',
             style: TextStyle(fontSize: 16, color: Color(0xFF888888)),
           ),
           SizedBox(height: 8),

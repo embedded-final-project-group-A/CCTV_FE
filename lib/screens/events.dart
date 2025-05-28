@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:video_player/video_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -25,21 +26,44 @@ class _EventsPageState extends State<EventsPage> {
 
   final String _storesApi = 'http://localhost:8000';
 
+  String? userId;
+
   @override
   void initState() {
     super.initState();
-    fetchUserStores();
+    _loadUserIdAndFetchStores();
+  }
+
+  Future<void> _loadUserIdAndFetchStores() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedUserId = prefs.getString('user_id');
+
+    if (storedUserId == null) {
+      debugPrint('No user_id found in SharedPreferences');
+      setState(() {
+        isLoadingStores = false;
+      });
+      return;
+    }
+
+    setState(() {
+      userId = storedUserId;
+    });
+
+    await fetchUserStores();
   }
 
   Future<void> fetchUserStores() async {
+    if (userId == null) return;
+
     try {
-      final response =
-          await http.get(Uri.parse('$_storesApi/api/user/stores?user_id=user1'));
+      final response = await http
+          .get(Uri.parse('$_storesApi/api/user/stores/detail?user_id=$userId'));
       if (response.statusCode == 200) {
         final List<dynamic> stores = jsonDecode(response.body);
         setState(() {
-          userStores = stores.cast<String>();
-          selectedStore = stores.isNotEmpty ? stores[0] : null;
+          userStores = stores.map<String>((e) => e['name'].toString()).toList();
+          selectedStore = userStores.isNotEmpty ? userStores[0] : null;
         });
         if (selectedStore != null) {
           await fetchCamerasForStore(selectedStore!);
@@ -56,6 +80,7 @@ class _EventsPageState extends State<EventsPage> {
     }
   }
 
+
   Future<void> fetchCamerasForStore(String store) async {
     setState(() {
       isLoadingCameras = true;
@@ -70,7 +95,8 @@ class _EventsPageState extends State<EventsPage> {
       if (response.statusCode == 200) {
         final List<dynamic> cams = jsonDecode(response.body);
         setState(() {
-          cameraLabels = cams.map<String>((e) => e["label"]?.toString() ?? "Unknown").toList();
+          cameraLabels =
+              cams.map<String>((e) => e["name"]?.toString() ?? "Unknown").toList();
           selectedCamera = cameraLabels.isNotEmpty ? cameraLabels[0] : null;
         });
 
@@ -78,7 +104,8 @@ class _EventsPageState extends State<EventsPage> {
           await fetchEventsForCamera(store, selectedCamera!);
         }
       } else {
-        debugPrint('Failed to fetch cameras for store $store: Status code ${response.statusCode}');
+        debugPrint(
+            'Failed to fetch cameras for store $store: Status code ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error fetching cameras: $e');
@@ -101,15 +128,15 @@ class _EventsPageState extends State<EventsPage> {
       if (response.statusCode == 200) {
         final List<dynamic> evts = jsonDecode(response.body);
         setState(() {
-          // [{"date": ..., "type": ..., "videoUrl": ...}, ...]
           events = evts.map<Map<String, String>>((e) => {
                 "date": e["date"]?.toString() ?? "",
                 "type": e["type"]?.toString() ?? "",
-                "videoUrl": e["videoUrl"]?.toString() ?? "",
+                "videoUrl": e["url"]?.toString() ?? "",
               }).toList();
         });
       } else {
-        debugPrint('Failed to fetch events for camera $cameraLabel: Status code ${response.statusCode}');
+        debugPrint(
+            'Failed to fetch events for camera $cameraLabel: Status code ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error fetching events: $e');
@@ -119,6 +146,7 @@ class _EventsPageState extends State<EventsPage> {
       });
     }
   }
+
 
   void onStoreSelected(String store) {
     setState(() {
@@ -141,6 +169,7 @@ class _EventsPageState extends State<EventsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: isLoadingStores
           ? const Center(child: CircularProgressIndicator())
           : userStores.isEmpty
@@ -354,7 +383,7 @@ class _CameraAccordionState extends State<CameraAccordion> {
                               children: events.map((event) {
                                 final date = event['date'] ?? '';
                                 final type = event['type'] ?? '';
-                                final videoUrl = event['videoUrl'] ?? '';
+                                final videoUrl = event['url'] ?? '';
 
                                 return InkWell(
                                   borderRadius: BorderRadius.circular(12),
@@ -410,7 +439,6 @@ class _CameraAccordionState extends State<CameraAccordion> {
       }).toList(),
     );
   }
-
 }
 
 class StoreSelector extends StatelessWidget {

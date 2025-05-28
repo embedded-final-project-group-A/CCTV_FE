@@ -44,12 +44,6 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
-          border: Border(
-            top: BorderSide(
-              color: Colors.grey,   // 회색 선 색상
-              width: 0.5,           // 선 두께
-            ),
-          ),
         ),
         padding: const EdgeInsets.only(top: 8),
         child: BottomNavigationBar(
