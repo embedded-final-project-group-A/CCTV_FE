@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:video_player/video_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/api_constants.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   String? userId;
 
-  final String _storesApi = 'http://localhost:8000';
+  final String _storesApi = '${ApiConstants.baseUrl}';
 
   @override
   void initState() {

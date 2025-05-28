@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:video_player/video_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/api_constants.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -24,7 +25,7 @@ class _EventsPageState extends State<EventsPage> {
   bool isLoadingCameras = false;
   bool isLoadingEvents = false;
 
-  final String _storesApi = 'http://localhost:8000';
+  final String _storesApi = '${ApiConstants.baseUrl}';
 
   String? userId;
 

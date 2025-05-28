@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:video_player/video_player.dart';
+import '../constants/api_constants.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -15,7 +16,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   List<NotificationItem> notifications = [];
   bool isLoading = true;
 
-  final String apiUrl = 'http://localhost:8000/api/user/alerts/';
+  final String apiUrl = '${ApiConstants.baseUrl}/api/user/alerts/';
   final String storageKey = 'cached_notifications';
 
   @override

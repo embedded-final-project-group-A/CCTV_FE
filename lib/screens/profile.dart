@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/api_constants.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,7 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isAlarmOn = true;
   String? userId;
 
-  final String _storesApi = 'http://localhost:8000';
+  final String _storesApi = '${ApiConstants.baseUrl}';
 
   UserProfile? userProfile;
 

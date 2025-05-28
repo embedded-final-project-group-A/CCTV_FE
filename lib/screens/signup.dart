@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../constants/api_constants.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -18,7 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool agreeToTerms = false;
 
   Future<void> _signupUser() async {
-    final uri = Uri.parse('http://localhost:8000/signup'); // 실제 서버 주소로 변경
+    final uri = Uri.parse('${ApiConstants.baseUrl}/signup'); // 실제 서버 주소로 변경
 
     try {
       final response = await http.post(

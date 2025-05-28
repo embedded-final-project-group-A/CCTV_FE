@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../constants/api_constants.dart';
 
 class CameraRegistrationPage extends StatefulWidget {
   const CameraRegistrationPage({super.key});
@@ -24,6 +25,8 @@ class _CameraRegistrationPageState extends State<CameraRegistrationPage> {
   String? selectedStoreId;
   bool isLoading = true;
 
+  final String _storesApi = '${ApiConstants.baseUrl}';
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +39,7 @@ class _CameraRegistrationPageState extends State<CameraRegistrationPage> {
 
     if (userId != null && userId!.isNotEmpty) {
       final response = await http.get(
-        Uri.parse("http://localhost:8000/api/user/stores/detail?user_id=$userId"),
+        Uri.parse("$_storesApi/api/user/stores/detail?user_id=$userId"),
       );
 
       if (response.statusCode == 200) {
@@ -74,7 +77,7 @@ class _CameraRegistrationPageState extends State<CameraRegistrationPage> {
       final imageUrl = "$url.png";
 
       final response = await http.post(
-        Uri.parse("http://localhost:8000/api/cameras"),
+        Uri.parse("$_storesApi/api/cameras"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "user_id": int.parse(userId!),

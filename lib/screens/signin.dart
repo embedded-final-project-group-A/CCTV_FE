@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/api_constants.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -23,7 +24,7 @@ class _SignInPageState extends State<SignInPage> {
 
     setState(() => _isLoading = true);
 
-    final url = Uri.parse('http://localhost:8000/login');
+    final url = Uri.parse('${ApiConstants.baseUrl}/login');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

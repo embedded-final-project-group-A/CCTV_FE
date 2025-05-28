@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/api_constants.dart';
 
 class StoreRegistrationPage extends StatefulWidget {
   const StoreRegistrationPage({super.key});
@@ -14,7 +15,7 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _storeNameController = TextEditingController();
   final TextEditingController _storeLocationController = TextEditingController();
-  final String _registerApi = 'http://localhost:8000/api/store/register';
+  final String _registerApi = '${ApiConstants.baseUrl}/api/store/register';
 
   Future<void> _registerStore() async {
     if (!_formKey.currentState!.validate()) return;
