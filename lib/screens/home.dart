@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
     try {
       // userId가 String이라도 백엔드에서 int로 파싱 가능하다면 그대로 쓸 수 있음.
       // 만약 int로 변환이 필요하면 int.parse(userId!) 사용 가능
-      final url = '$_storesApi/api/store/cameras?user_id=$userId&store=$storeName';
+      final url = '$_storesApi/api/store/cameras?user_id=${int.parse(userId!)}&store=$storeName';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final List<dynamic> cams = jsonDecode(response.body);
@@ -93,14 +93,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
   void onStoreSelected(String store) async {
     setState(() {
       selectedStore = store;
     });
     await fetchCamerasForStore(store);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

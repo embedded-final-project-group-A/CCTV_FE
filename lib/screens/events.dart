@@ -99,7 +99,7 @@ class _EventsPageState extends State<EventsPage> {
     }
 
     try {
-      final url = '$_storesApi/api/store/cameras?user_id=$userId&store=$store';
+      final url = '$_storesApi/api/store/cameras?user_id=${int.parse(userId!)}&store=$store';
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {

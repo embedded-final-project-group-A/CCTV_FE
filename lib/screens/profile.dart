@@ -86,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> fetchCamerasForStore(String store) async {
     try {
-      final response = await http.get(Uri.parse('$_storesApi/api/store/cameras?store=$store'));
+      final response = await http.get(Uri.parse('$_storesApi/api/store/cameras?user_id=$userId&store=$store'));
       if (response.statusCode == 200) {
         final List<dynamic> cams = jsonDecode(response.body);
         setState(() {
