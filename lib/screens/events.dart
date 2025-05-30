@@ -387,8 +387,9 @@ class _CameraAccordionState extends State<CameraAccordion> {
                       : events.isEmpty
                           ? const Padding(
                               padding: EdgeInsets.all(16),
-                              child: Text("이벤트가 없습니다."),
-                            )
+                              child: Text("No events available for this camera.",
+                                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                            ))
                           : Column(
                               children: events.map((event) {
                                 final date = event['date'] ?? '';
