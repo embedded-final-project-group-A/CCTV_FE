@@ -90,9 +90,18 @@ class _EventsPageState extends State<EventsPage> {
       events = [];
     });
 
+    if (userId == null || userId!.isEmpty) {
+      debugPrint('User ID is null or empty');
+      setState(() {
+        isLoadingCameras = false;
+      });
+      return;
+    }
+
     try {
-      final response =
-          await http.get(Uri.parse('$_storesApi/api/store/cameras?store=$store'));
+      final url = '$_storesApi/api/store/cameras?user_id=$userId&store=$store';
+      final response = await http.get(Uri.parse(url));
+
       if (response.statusCode == 200) {
         final List<dynamic> cams = jsonDecode(response.body);
         setState(() {

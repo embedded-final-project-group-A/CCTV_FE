@@ -65,25 +65,34 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> fetchCamerasForStore(String store) async {
+  Future<void> fetchCamerasForStore(String storeName) async {
+    if (userId == null || userId!.isEmpty) {
+      debugPrint('User ID is null or empty');
+      return;
+    }
+
     try {
-      final response = await http.get(Uri.parse('$_storesApi/api/store/cameras?store=$store'));
+      // userId가 String이라도 백엔드에서 int로 파싱 가능하다면 그대로 쓸 수 있음.
+      // 만약 int로 변환이 필요하면 int.parse(userId!) 사용 가능
+      final url = '$_storesApi/api/store/cameras?user_id=$userId&store=$storeName';
+      final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final List<dynamic> cams = jsonDecode(response.body);
         setState(() {
           cameraFeeds = cams.map<Map<String, String>>((e) => {
-            "label": e["name"]?.toString() ?? "Unknown", // 수정: name
-            "imageUrl": e["image_url"]?.toString() ?? "", // 수정: image_url
-            "videoUrl": e["video_url"]?.toString() ?? "", // 수정: video_url
+            "label": e["name"]?.toString() ?? "Unknown",
+            "imageUrl": e["image_url"]?.toString() ?? "",
+            "videoUrl": e["video_url"]?.toString() ?? "",
           }).toList();
         });
       } else {
-        debugPrint('Failed to fetch cameras for store $store: Status code ${response.statusCode}');
+        debugPrint('Failed to fetch cameras for store $storeName: Status code ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error fetching cameras: $e');
     }
   }
+
 
   void onStoreSelected(String store) async {
     setState(() {
