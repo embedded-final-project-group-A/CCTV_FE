@@ -310,7 +310,7 @@ class _CameraAccordionState extends State<CameraAccordion> {
     });
 
     final uri = Uri.parse(
-        'http://localhost:8000/api/store/events?store=${widget.selectedStore}&camera_label=$cameraLabel');
+        '${ApiConstants.baseUrl}/api/store/events?store=${widget.selectedStore}&camera_label=$cameraLabel');
 
     try {
       final response = await http.get(uri);
