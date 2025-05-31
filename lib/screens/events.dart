@@ -141,7 +141,7 @@ class _EventsPageState extends State<EventsPage> {
           events = evts.map<Map<String, String>>((e) => {
                 "date": e["date"]?.toString() ?? "",
                 "type": e["type"]?.toString() ?? "",
-                "videoUrl": e["url"]?.toString() ?? "",
+                "videoUrl": e["url"]?.toString() ?? "", 
               }).toList();
         });
       } else {
@@ -394,7 +394,7 @@ class _CameraAccordionState extends State<CameraAccordion> {
                               children: events.map((event) {
                                 final date = event['date'] ?? '';
                                 final type = event['type'] ?? '';
-                                final videoUrl = event['url'] ?? '';
+                                final videoUrl = event['url'] ?? ''; 
 
                                 return InkWell(
                                   borderRadius: BorderRadius.circular(12),
