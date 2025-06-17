@@ -18,20 +18,22 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
   final String _registerApi = '${ApiConstants.baseUrl}/api/store/register';
 
   Future<void> _registerStore() async {
+    FocusScope.of(context).unfocus(); // 키보드 숨기기
+
     if (!_formKey.currentState!.validate()) return;
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('user_id');
 
     if (userId == null) {
-      _showDialog('Error', 'User ID not found.');
+      _showDialog('Error', 'User ID not found. Please log in again.');
       return;
     }
 
     final storeData = {
-      'user_id': int.parse(userId),
-      'name': _storeNameController.text,
-      'location': _storeLocationController.text,
+      'user_id': userId,
+      'name': _storeNameController.text.trim(),
+      'location': _storeLocationController.text.trim(),
     };
 
     try {
@@ -41,13 +43,19 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
         body: jsonEncode(storeData),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         _showDialog('Success', 'Store registered: ${data['name']}');
+
         _storeNameController.clear();
         _storeLocationController.clear();
       } else {
-        _showDialog('Error', 'Failed to register store: ${response.body}');
+        try {
+          final errorData = jsonDecode(response.body);
+          _showDialog('Error', 'Failed to register store: ${errorData['detail'] ?? response.body}');
+        } catch (_) {
+          _showDialog('Error', 'Failed to register store: ${response.body}');
+        }
       }
     } catch (e) {
       _showDialog('Error', 'Failed to connect to server: $e');
@@ -61,7 +69,10 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
         title: Text(title),
         content: Text(message),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
         ],
       ),
     );
@@ -110,7 +121,7 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) =>
-                          value == null || value.isEmpty ? 'Please enter store name' : null,
+                          value == null || value.trim().isEmpty ? 'Please enter store name' : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -120,7 +131,7 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) =>
-                          value == null || value.isEmpty ? 'Please enter store location' : null,
+                          value == null || value.trim().isEmpty ? 'Please enter store location' : null,
                     ),
                     const SizedBox(height: 24),
                     SizedBox(

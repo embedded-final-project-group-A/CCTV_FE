@@ -15,10 +15,8 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> {
   List<NotificationItem> notifications = [];
   bool isLoading = true;
-  bool detectionStarted = false; // start 버튼 상태
 
   final String apiUrl = '${ApiConstants.baseUrl}/api/user/alerts/';
-  final String detectionApiUrl = '${ApiConstants.baseUrl}/api/start-detection/';
   final String storageKey = 'cached_notifications';
 
   @override
@@ -83,32 +81,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  Future<void> startDetection() async {
-    try {
-      // store_id, camera_id는 필요에 맞게 바꾸세요
-      final url = Uri.parse(
-          '$detectionApiUrl?store_id=1&camera_id=1'); // 쿼리파라미터 방식
-      final response = await http.post(url);
-
-      if (response.statusCode == 200) {
-        setState(() {
-          detectionStarted = true;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Detection started')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to start detection: ${response.statusCode}')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
-  }
-
   Map<String, List<NotificationItem>> groupNotificationsByDate() {
     Map<String, List<NotificationItem>> grouped = {};
     for (var notification in notifications) {
@@ -141,14 +113,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
       ),
       body: Column(
         children: [
-          if (!detectionStarted)
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton(
-                onPressed: startDetection,
-                child: const Text('Start Detection'),
-              ),
-            ),
           Expanded(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())

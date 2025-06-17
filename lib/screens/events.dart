@@ -340,9 +340,9 @@ class _CameraAccordionState extends State<CameraAccordion> {
         final isLoading = _loadingMap[cameraLabel] ?? false;
         final events = _cameraEvents[cameraLabel] ?? [];
 
-        return Center( // <-- 여기서 가운데 정렬
+        return Center(
           child: Container(
-            width: widget.cardWidth,  // 고정된 가로 크기
+            width: widget.cardWidth, 
             margin: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
               color: Colors.white,

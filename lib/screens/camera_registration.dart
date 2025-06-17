@@ -74,7 +74,7 @@ class _CameraRegistrationPageState extends State<CameraRegistrationPage> {
       }
 
       final videoUrl = "$url.mp4";
-      final imageUrl = "$url.png";
+      final imageUrl = "$url.jpg";
 
       final response = await http.post(
         Uri.parse("$_storesApi/api/cameras"),
