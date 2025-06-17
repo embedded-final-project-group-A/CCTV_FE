@@ -176,13 +176,15 @@ class _NotificationCard extends StatelessWidget {
   String getTypeDescription(int typeId) {
     switch (typeId) {
       case 1:
-        return 'Motion detected';
+        return 'theft';
       case 2:
-        return 'Person detected';
+        return 'fall';
       case 3:
-        return 'Sound detected';
+        return 'fight';
+      case 4:
+        return 'smoke';
       default:
-        return 'Unknown event type';
+        return 'Motion Detected';
     }
   }
 
