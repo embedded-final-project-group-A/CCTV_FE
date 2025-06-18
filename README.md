@@ -8,7 +8,6 @@
 
 ## 1. Project Introduction
 ---
-
 This project is an unmanned store abnormal behavior detection application based on YOLO.
 
 ### YOLO-based Abnormal Behavior Detection & Alert
@@ -23,8 +22,7 @@ This project is an unmanned store abnormal behavior detection application based 
 
 ## 2. Development Environment
 ---
-
-<img alt="Figma"src="https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white" height="20"/> <img alt="Flutter"src="https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white" height="20"/>
+<img alt="Figma"src="[https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white](https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white)" height="20"/> <img alt="Flutter"src="[https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white](https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)" height="20"/>
 
 * Design: Figma
 * Front-End: Flutter
@@ -35,7 +33,6 @@ This project is an unmanned store abnormal behavior detection application based 
 
 ## 3. Technology Stack Selection Rationale
 ---
-
 ### Flutter
 Our team chose the Flutter framework for front-end development. The primary reason was its ability to maximize development efficiency by supporting various platforms such as web, Android, and iOS from a single codebase. Beyond this, Flutter offered the following technical strengths that contributed to achieving our project goals:
 
@@ -67,7 +64,6 @@ FastAPI boasts well-organized official documentation and an active open-source c
 
 ## 4. Project Setup and Execution
 ---
-
 ### Required Tools
 * Flutter SDK: 3.32.0
 * Git: Required for repository cloning
