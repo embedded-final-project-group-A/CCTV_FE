@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadUserIdAndFetchStores() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    userId = prefs.getString('user_id');
+    userId = prefs.getInt('userId')?.toString();
 
     if (userId != null && userId!.isNotEmpty) {
       await fetchUserStores(userId!);

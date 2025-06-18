@@ -23,7 +23,7 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString('user_id');
+    final userId = prefs.getInt('user_id');
 
     if (userId == null) {
       _showDialog('Error', 'User ID not found. Please log in again.');

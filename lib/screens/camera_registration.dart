@@ -35,7 +35,7 @@ class _CameraRegistrationPageState extends State<CameraRegistrationPage> {
 
   Future<void> _loadUserIdAndFetchStores() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    userId = prefs.getString('user_id');
+    userId = prefs.getInt('userId')?.toString();
 
     if (userId != null && userId!.isNotEmpty) {
       final response = await http.get(

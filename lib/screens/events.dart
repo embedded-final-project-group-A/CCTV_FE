@@ -37,7 +37,7 @@ class _EventsPageState extends State<EventsPage> {
 
   Future<void> _loadUserIdAndFetchStores() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? storedUserId = prefs.getString('user_id');
+    String? storedUserId = prefs.getInt('userId')?.toString();
 
     if (storedUserId == null) {
       debugPrint('No user_id found in SharedPreferences');
