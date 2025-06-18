@@ -24,11 +24,11 @@ This project is an unmanned store abnormal behavior detection application based 
 ---
 <img alt="Figma"src="[https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white](https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white)" height="20"/> <img alt="Flutter"src="[https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white](https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)" height="20"/>
 
-* Design: Figma
-* Front-End: Flutter
-* Back-End: FastAPI
-* Database: SQLite
-* Collaboration Tools: GitHub, Notion
+* **Design**: Figma
+* **Front-End**: Flutter
+* **Back-End**: FastAPI
+* **Database**: SQLite
+* **Collaboration Tools**: GitHub, Notion
 
 
 ## 3. Technology Stack Selection Rationale
@@ -65,26 +65,26 @@ FastAPI boasts well-organized official documentation and an active open-source c
 ## 4. Project Setup and Execution
 ---
 ### Required Tools
-* Flutter SDK: 3.32.0
-* Git: Required for repository cloning
-* IDE: VSCode (other options available)
+* **Flutter SDK**: 3.32.0
+* **Git**: Required for repository cloning
+* **IDE**: VSCode (other options available)
 
 ### Project Installation
 
-**1. Clone the Repository**
+1. **Clone the Repository**
 Clone the project repository to your local machine:
 ```bash
 git clone https://github.com/embedded-final-project-group-A/CCTV_FE.git
 cd CCTV_FE
 ```
 
-**2. Install Dependencies**
+2. **Install Dependencies**
 Navigate into the project folder and install all necessary Flutter packages and dependencies:
 ```bash
 flutter pub get
 ```
 
-**3. Check Available Devices**
+3. **Check Available Devices**
 You can check the list of currently available devices or platforms:
 ```bash
 flutter devices
