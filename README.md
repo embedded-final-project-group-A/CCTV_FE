@@ -22,7 +22,7 @@ This project is an unmanned store abnormal behavior detection application based 
 
 ## 2. Development Environment
 ---
-&lt;img alt="Figma" src="https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white" height="20"/> &lt;img alt="Flutter" src="https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white" height="20"/>
+<img alt="Figma" src="https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white" height="20"/> <img alt="Flutter" src="https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white" height="20"/>
 
 
 * **Design**: Figma
