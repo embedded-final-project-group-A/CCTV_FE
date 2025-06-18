@@ -184,7 +184,7 @@ This project's application leverages YOLO technology to detect abnormal behavior
 
 ### **Notificatios**
 
-<img alt="페이지 별 기능" src="./assets/images/알림.png" width="600"/>
+<img alt="페이지 별 기능" src="./assets/images/알림.png" width="500"/>
 
 **Abnormal Behavior Notification (Notification Screen)**
 * **Real-time Alerts**: When a new abnormal behavior event is detected and saved, an alert is sent to the app.
@@ -203,20 +203,20 @@ This project's application leverages YOLO technology to detect abnormal behavior
 Here's a breakdown of the roles and contributions of each team member:
 
 ### 👩🏻‍💻 **Yerim Choi**
-* Data Collection
-* UI Design: Sign Up, Sign In, Home, Notification, Events, Profile, Navigator
-* Front-End: Sign Up, Sign In, Home, Notification, Events, Profile, Navigator
-* Back-End: Database, Auth, Camera, Events, Store, User  
+* **Data Collection**
+* **UI Design**: Sign Up, Sign In, Home, Notification, Events, Profile, Navigator
+* **Front-End**: Sign Up, Sign In, Home, Notification, Events, Profile, Navigator
+* **Back-End**: Database, Auth, Camera, Events, Store, User  
 
 ### 👩🏻‍💻 **Yujin Min**
-* Data Collection
-* Front-End: Events
-* Back-End: Events  
+* **Data Collection**
+* **Front-End**: Events
+* **Back-End**: Events  
 
 ### 👨🏻‍💻 **Taekmin Youn**
-* Data Collection
-* YOLO Model Training Data Preprocessing
-* YOLO Model Training
+* **Data Collection**
+* **YOLO Model Training Data Preprocessing**
+* **YOLO Model Training**
 
 
 ## 8. Future Plans
