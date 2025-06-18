@@ -48,17 +48,17 @@ For team members with limited prior front-end development experience, Flutter's 
 ### FastAPI
 Our team selected FastAPI as the backend framework. We determined that FastAPI, as a modern Python web framework, was well-suited for our project requirements due to its fast development speed, high performance, and intuitive code structure.
 
-* **Team's Python Proficiency and High Productivity**
+* **Team's Python Proficiency and High Productivity**  
 All our team members were familiar with Python, allowing us to quickly begin development without spending much time learning a new framework. FastAPI seamlessly integrates Python's syntax and type hints, enabling us to naturally apply existing Python knowledge to backend development.
-* **Fast Development Speed & Automatic Documentation**
+* **Fast Development Speed & Automatic Documentation**  
 FastAPI declares APIs based on Python's type hints, which provides automatic documentation features via Swagger UI and ReDoc. This was highly useful during API testing and client integration, playing a significant role in boosting development productivity.
-* **High Performance (Asynchronous Processing Support)**
+* **High Performance (Asynchronous Processing Support)**  
 Built on Starlette, FastAPI actively supports Python's `async`/`await` syntax. This allowed for efficient handling of I/O-bound tasks and demonstrated excellent performance in concurrent user processing.
-* **Concise and Clear Code Structure**
+* **Concise and Clear Code Structure**  
 FastAPI enables more structured code than Flask and lighter, more concise code than Django. This significantly improved the maintainability and readability of our backend code.
-* **Automatic Data Validation and Serialization (Pydantic-based)**
+* **Automatic Data Validation and Serialization (Pydantic-based)**  
 FastAPI automatically handles input data validation and serialization through Pydantic. This was advantageous for managing complex data structures and effectively preventing user input errors.
-* **Excellent Documentation and Community Support**
+* **Excellent Documentation and Community Support**  
 FastAPI boasts well-organized official documentation and an active open-source community, which allowed for quick problem-solving when issues arose.
 
 
@@ -71,20 +71,20 @@ FastAPI boasts well-organized official documentation and an active open-source c
 
 ### Project Installation
 
-1. **Clone the Repository**
+1. **Clone the Repository**  
 Clone the project repository to your local machine:
 ```bash
 git clone https://github.com/embedded-final-project-group-A/CCTV_FE.git
 cd CCTV_FE
 ```
 
-2. **Install Dependencies**
+2. **Install Dependencies**  
 Navigate into the project folder and install all necessary Flutter packages and dependencies:
 ```bash
 flutter pub get
 ```
 
-3. **Check Available Devices**
+3. **Check Available Devices**  
 You can check the list of currently available devices or platforms:
 ```bash
 flutter devices
@@ -105,3 +105,36 @@ flutter run -d chrome
 If you wish to run it on an Android emulator, connect a physical Android device with USB debugging enabled and use the `flutter run` command. Please note that some features may be limited when running on an Android emulator.
 iOS simulator is not supported.
 
+
+## 5. Project Structure
+---
+The main file structure of the project is as follows:
+```markdown
+📁 CCTV_FE/
+│
+├── README.md                    # 프로젝트 설명 문서
+├── pubspec.yaml                 # Flutter 의존성 및 설정 파일
+│
+├── 📁 assets/                   # 앱에서 사용하는 정적 자산
+│   └── 📁 images/
+│       └── profile.png          # 사용자 프로필 이미지 (기본 이미지)
+│
+├── 📁 lib/                      # Flutter 애플리케이션 핵심 코드
+│   ├── 📁 constants/            # 상수 정의 (ex. 색상, 스타일 등)
+│
+│   ├── 📁 screens/                   # 주요 UI 화면 (페이지)
+│   │   ├── aboutus.dart              # About Us 화면
+│   │   ├── camera_registration.dart  # 카메라 등록 화면
+│   │   ├── events.dart               # 이벤트 목록 및 세부 정보 화면
+│   │   ├── home.dart                 # 홈 화면
+│   │   ├── notifications.dart        # 알림 화면
+│   │   ├── profile.dart              # 사용자 프로필 화면
+│   │   ├── signin.dart               # 로그인 화면
+│   │   ├── signup.dart               # 회원가입 화면
+│   │   ├── store_registration.dart   # 매장 등록 화면
+│   │   └── support.dart              # 고객 지원/문의 화면
+│
+│   ├── 📁 wrappers/                # 공통 레이아웃 또는 네비게이션 래퍼
+│   │   └── bottom_nav_wrapper.dart  # 하단 네비게이션 바 래퍼
+│   └── main.dart                    # 앱 진입점 (Flutter entry point)
+```
