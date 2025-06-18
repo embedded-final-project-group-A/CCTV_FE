@@ -44,9 +44,8 @@ class _SignInPageState extends State<SignInPage> {
         return;
       }
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_id', userId.toString());
-      
-      // 예: 로그인 성공 후 이동
+      await prefs.setInt('userId', userId);
+
       Navigator.pushReplacementNamed(context, '/home');
     }
   }

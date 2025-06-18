@@ -24,6 +24,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     super.initState();
     loadCachedNotifications();
     fetchNotifications();
+    // 10초마다 주기적 갱신
     Future.delayed(const Duration(seconds: 10), _periodicFetch);
   }
 
@@ -58,7 +59,21 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   Future<void> fetchNotifications() async {
     try {
-      final response = await http.get(Uri.parse(apiUrl));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final int? userId = prefs.getInt('userId');
+      if (userId == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('User ID not found. Please login.')),
+          );
+        }
+        setState(() => isLoading = false);
+        return;
+      }
+
+      final url = Uri.parse('$apiUrl?user_id=$userId');
+      final response = await http.get(url);
+
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         final fetchedItems =
@@ -70,6 +85,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
         cacheNotifications(fetchedItems);
       } else {
         setState(() => isLoading = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to load notifications: ${response.statusCode}')),
+          );
+        }
       }
     } catch (e) {
       setState(() => isLoading = false);
@@ -154,7 +174,7 @@ class _NotificationSection extends StatelessWidget {
             Text(date, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
             TextButton(
               onPressed: () {
-                // TODO: Clear all notifications of this date
+                // TODO: 날짜별 알림 모두 삭제 기능 구현 필요
               },
               child: const Text('Clear all', style: TextStyle(fontSize: 14)),
             ),
@@ -176,13 +196,13 @@ class _NotificationCard extends StatelessWidget {
   String getTypeDescription(int typeId) {
     switch (typeId) {
       case 1:
-        return 'theft';
+        return 'Theft';
       case 2:
-        return 'fall';
+        return 'Fall';
       case 3:
-        return 'fight';
+        return 'Fight';
       case 4:
-        return 'smoke';
+        return 'Smoke';
       default:
         return 'Motion Detected';
     }
