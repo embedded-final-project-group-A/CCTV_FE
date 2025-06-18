@@ -22,7 +22,7 @@ This project is an unmanned store abnormal behavior detection application based 
 
 ## 2. Development Environment
 ---
-<img alt="개발 환경" src="./assets/images/개발환경.png" width="400"/>
+<img alt="개발 환경" src="./assets/images/개발환경.png" width="800"/>
 
 
 * **Design**: Figma
@@ -139,3 +139,94 @@ The main file structure of the project is as follows:
 │   │   └── bottom_nav_wrapper.dart  # 하단 네비게이션 바 래퍼
 │   └── main.dart                    # 앱 진입점 (Flutter entry point)
 ```
+
+
+## 6. Page-Specific Features
+---
+This project's application leverages YOLO technology to detect abnormal behavior in unmanned stores in real-time, providing store owners with instant notifications and evidence. Through the app's main features, store owners can manage their stores safely and efficiently.  
+
+**Note**: For the application to function, the backend server must be running. Please refer to the CCTV_BE repository for instructions on how to run the backend server.
+
+### **Application Test Accounts**
+* ID: user1 / PW: password1
+* ID: user2 / PW: password2
+* ID: user3 / PW: password3
+
+### **User Information Management (or Account Management)**
+
+<img alt="페이지 별 기능" src="./assets/images/회원가입.png" width="400"/> <img alt="페이지 별 기능" src="./assets/images/회원가입2.png" width="400"/>
+
+**Sign Up**
+* **Account Creation**: Create an account by entering your username, email, and password. (Consent to the terms and conditions via checkbox is required.)
+* **Post-Sign Up Guidance**: Upon successful registration, a message guiding you to the login screen will be displayed.
+
+<img alt="페이지 별 기능" src="./assets/images/로그인.png" width="400"/> <img alt="페이지 별 기능" src="./assets/images/로그인2.png" width="400"/>
+
+**Sign In**
+* **Login Process**: You can log in by entering either your username or email, followed by the corresponding account's password.
+
+<img alt="페이지 별 기능" src="./assets/images/프로필.png" width="250"/> <img alt="페이지 별 기능" src="./assets/images/매장등록.png" width="250"/> <img alt="페이지 별 기능" src="./assets/images/카메라등록.png" width="250"/>
+
+**Profile**
+* **Personal Information Management**: Displays the username and email of the logged-in account.
+* **Alarm**: Allows you to turn notification features on or off.
+* **Storage Registration**: Add new stores by entering the store name and location.
+* **Camera Registration**: Select a store and add new CCTV equipment by entering the camera name and URL.
+
+### **Home**
+
+<img alt="페이지 별 기능" src="./assets/images/홈.png" width="250"/> <img alt="페이지 별 기능" src="./assets/images/홈2.png" width="250"/> <img alt="페이지 별 기능" src="./assets/images/홈3.png" width="250"/>
+
+**Store and Camera List at a Glance (Home Screen)**
+* **View Registered Stores and Cameras**: Displays registered stores and cameras based on the logged-in account's user ID.
+* **Real-time Video Monitoring**: Clicking on each camera's thumbnail allows for real-time monitoring of the store's situation.  
+(Note: Due to time constraints in implementing real-time communication for this application, videos stored on the backend server are displayed instead of live streams.)
+
+### **Notificatios**
+
+<img alt="페이지 별 기능" src="./assets/images/알림.png" width="600"/>
+
+**Abnormal Behavior Notification (Notification Screen)**
+* **Real-time Alerts**: When a new abnormal behavior event is detected and saved, an alert is sent to the app.
+
+### **Events**
+
+<img alt="페이지 별 기능" src="./assets/images/이벤트.png" width="400"/> <img alt="페이지 별 기능" src="./assets/images/이벤트2.png" width="400"/>
+
+**Detailed Event Log Inquiry (Events Screen)**
+* **View Event History**: Retrieves the event logs for stores based on the logged-in account's user ID.
+* **Clip Playback**: Provides video playback of the moment abnormal behavior occurred for each event, enabling detailed situation assessment.
+
+
+## 7. Role Distribution
+---
+Here's a breakdown of the roles and contributions of each team member:
+
+### 👩🏻‍💻 **Yerim Choi**
+* Data Collection
+* UI Design: Sign Up, Sign In, Home, Notification, Events, Profile, Navigator
+* Front-End: Sign Up, Sign In, Home, Notification, Events, Profile, Navigator
+* Back-End: Database, Auth, Camera, Events, Store, User  
+
+### 👩🏻‍💻 **Yujin Min**
+* Data Collection
+* Front-End: Events
+* Back-End: Events  
+
+### 👨🏻‍💻 **Taekmin Youn**
+* Data Collection
+* YOLO Model Training Data Preprocessing
+* YOLO Model Training
+
+
+## 8. Future Plans
+---
+Our project, the YOLO-based unmanned store abnormal behavior detection system, aims for continuous development to provide users with more stable and convenient services. Although not yet implemented, the following are key features we plan to add through future development:
+
+**Individual User Server Implementation**  
+Currently, the system operates in a single server environment. In the future, we plan to establish customized server environments for individual users to enhance data security and respond more flexibly to specific user requirements.
+
+**Extended Login Functionality**  
+While basic login functionality is provided, we intend to implement "Forgot Password" functionality and integrate social login options to enhance user convenience.
+
+The main reasons these features are not yet implemented are our team's limited front-end development experience and challenges with server operations. As this project was our team's first attempt, we faced many challenges in both technology stack selection and the actual implementation process. However, we are committed to continuously learning and evolving to overcome these limitations and provide an even more robust and user-friendly service.
