@@ -266,7 +266,7 @@ This project's application leverages YOLO technology to detect abnormal behavior
 
 </br>
 
-**프로필 (Profile)**
+**Profile**
 
 <img alt="profile" src="./README/images/profile.png" width="280"/>
 
