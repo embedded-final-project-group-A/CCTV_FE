@@ -14,6 +14,13 @@
 
 </br>
 
+Details regarding the backend server can be found in the [CCTV_BE repository](https://github.com/embedded-final-project-group-A/CCTV_BE).
+
+Information about the YOLO model used in this project is available in the [YOLO repository](https://github.com/embedded-final-project-group-A/YOLO).
+
+
+</br>
+
 ## 1. Project Introduction
 
 This project is an unmanned store abnormal behavior detection application based on YOLO.
@@ -38,13 +45,18 @@ This project is an unmanned store abnormal behavior detection application based 
 
 ## 2. Development Environment
 
-<img alt="개발 환경" src="./README/images/development.png" width="800"/>
+<img alt="development_env" src="./README/images/development.jpg" width="800"/>
 
-* **Design**: Figma
+* **UX/UI**: Figma
 * **Front-End**: Flutter
-* **Back-End**: FastAPI
+* **Back-End**: Python, FastAPI, Unicorn
 * **Database**: SQLite
+* **YOLO**: Python, YOLO v8
 * **Collaboration Tools**: GitHub, Notion
+
+</br>
+
+<img alt="개발 환경" src="./README/images/environment.jpg" width="800"/>
 
 </br>
 

@@ -14,6 +14,12 @@
 
 </br>
 
+백엔드 서버와 관련된 더 자세한 내용은 [CCTV_BE 레포지토리](https://github.com/embedded-final-project-group-A/CCTV_BE)에 정리되어 있습니다. 
+
+이번 프로젝트에서 사용된 YOLO 모델에 대한 정보는 [YOLO 레포지토리](https://github.com/embedded-final-project-group-A/YOLO)에 정리되어 있습니다. 
+
+</br>
+
 ## 1. 프로젝트 소개
 
 본 프로젝트는 YOLO를 기반으로 한 무인매장 이상행동 탐지 어플리케이션입니다. 
@@ -38,13 +44,18 @@
 
 ## 2. 개발 환경
 
-<img alt="개발 환경" src="./images/development.png" width="800"/>
+<img alt="개발 환경" src="./images/development.jpg" width="800"/>
 
-- **디자인**: Figma
-- **Front**: Flutter
-- **Back-End**: Fast-API
+- **UX/UI**: Figma
+- **Front-End**: Flutter
+- **Back-End**: Python, Fast-API, Unicorn
 - **데이터베이스**: SQLite
+- **YOLO**: Python, YOLO v8
 - **협업 툴**: Github, Notion
+
+</br>
+
+<img alt="개발 환경" src="./images/environment.jpg" width="800"/>
 
 </br>
 
