@@ -36,13 +36,13 @@ This project is an unmanned store abnormal behavior detection application based 
 ### Flutter
 Our team chose the Flutter framework for front-end development. The primary reason was its ability to maximize development efficiency by supporting various platforms such as web, Android, and iOS from a single codebase. Beyond this, Flutter offered the following technical strengths that contributed to achieving our project goals:
 
-* **High Development Productivity (Hot Reload & Hot Restart)**
+* **High Development Productivity (Hot Reload & Hot Restart)**  
 Flutter's Hot Reload instantly reflects code changes without needing to restart the app, accelerating development for UI adjustments or bug fixes. Additionally, Hot Restart provides quick restarts while resetting the app's state, saving significant development time.
-* **Consistent UI/UX (Customizable Widgets & Skia Engine)**
+* **Consistent UI/UX (Customizable Widgets & Skia Engine)**  
 Flutter offers a rich widget library based on Google's Material Design and Apple's Cupertino design systems. This enabled us to build a consistent UI across all platforms. Furthermore, by using its own rendering engine, Skia, Flutter directly draws the UI independently of the OS, resulting in fewer compatibility issues across different OS versions or device types and providing an excellent user experience (UX).
-* **Outstanding Performance (Native Compiled Code)**
+* **Outstanding Performance (Native Compiled Code)**  
 Flutter apps compile Dart code directly into ARM or Intel machine code. This delivers high performance comparable to native apps, enabling the implementation of fast and responsive applications.
-* **Considering Team Proficiency**
+* **Considering Team Proficiency**  
 For team members with limited prior front-end development experience, Flutter's intuitive widget structure and clear documentation significantly lowered the learning curve, enabling efficient development within a short period.
 
 ### FastAPI
