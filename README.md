@@ -13,7 +13,7 @@ This project is an unmanned store abnormal behavior detection application based 
 ### YOLO-based Abnormal Behavior Detection & Alert
 * The YOLO model analyzes CCTV footage from unmanned stores in real-time to detect abnormal behavior.
 * When abnormal behavior is detected, the application's notification window displays the time of occurrence and the details of the abnormal behavior.
-* Target Abnormal Behaviors: Falling, Theft, Smoking, Fighting.
+* **Target Abnormal Behaviors**: Falling, Theft, Smoking, Fighting.
 
 ### CCTV Video Storage & Provision
 * CCTV clips and screenshots from the moment abnormal behavior is detected are automatically saved.
@@ -22,7 +22,8 @@ This project is an unmanned store abnormal behavior detection application based 
 
 ## 2. Development Environment
 ---
-<img alt="Figma"src="[https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white](https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white)" height="20"/> <img alt="Flutter"src="[https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white](https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)" height="20"/>
+&lt;img alt="Figma" src="https://img.shields.io/badge/Figma-F24E1E.svg?style=for-the-badge&logo=Figma&logoColor=white" height="20"/> &lt;img alt="Flutter" src="https://img.shields.io/badge/Flutter-02569B.svg?style=for-the-badge&logo=Flutter&logoColor=white" height="20"/>
+
 
 * **Design**: Figma
 * **Front-End**: Flutter
