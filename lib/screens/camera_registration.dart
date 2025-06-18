@@ -119,11 +119,16 @@ class _CameraRegistrationPageState extends State<CameraRegistrationPage> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,      
       appBar: AppBar(
-        title: const Text('Camera Registration'),
+        title: const Text(
+          'Camera Registration',
+          style: TextStyle(fontSize: 22, color: Color(0xFF222222), fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        elevation: 1,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

@@ -31,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserIdAndFetchStores() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    userId = prefs.getString('user_id');
+    userId = prefs.getInt('userId')?.toString();
 
     if (userId != null && userId!.isNotEmpty) {
       await fetchUserProfile(userId!);
