@@ -38,7 +38,7 @@ This project is an unmanned store abnormal behavior detection application based 
 
 ## 2. Development Environment
 
-<img alt="개발 환경" src="./README/development.png" width="800"/>
+<img alt="개발 환경" src="./README/images/development.png" width="800"/>
 
 * **Design**: Figma
 * **Front-End**: Flutter
