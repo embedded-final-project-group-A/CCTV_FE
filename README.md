@@ -6,6 +6,10 @@
 
 # 🚨 Smart Unmanned Store: YOLO AI Abnormal Behavior Detection & Alert App
 
+<p align="center">
+  <img alt="application" src="./README/images/application.gif" width="300"/>
+</p>
+
 ### **Development Period**
 
 - **Overall Development Period**: 2025.04.29 - 2025.06.19
@@ -192,7 +196,7 @@ iOS simulator is not supported.
 
 </br>
 
-## 5. 프로젝트 구조
+## 5. Project Structure
 
 The main file structure of the project is as follows:
 
@@ -228,7 +232,29 @@ The main file structure of the project is as follows:
 
 </br>
 
-## 6. Page-Specific Features
+## 6. YOLO Model
+### Dataset
+| **Dataset** | **Classes** | **size** |
+| --- | --- | --- |
+| **[Indoor (convenience store/shop) </br> Human Abnormal Behavior Dataset](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&searchKeyword=%EC%8B%A4%EB%82%B4(%ED%8E%B8%EC%9D%98%EC%A0%90,%20%EB%A7%A4%EC%9E%A5)%20%EC%82%AC%EB%9E%8C%20%EC%9D%B4%EC%83%81%ED%96%89%EB%8F%99%20%EB%8D%B0%EC%9D%B4%ED%84%B0&aihubDataSe=data&dataSetSn=71550)** | Fall, Smoking, Theft, Fight | Train: 5,322</br>Val: 658 |
+| **[Indoor (convenience store/shop) </br> Purchasing Behavior Dataset](https://www.aihub.or.kr/aihubdata/data/view.do?pageIndex=1&currMenu=115&topMenu=100&srchOptnCnd=OPTNCND001&searchKeyword=%EC%8B%A4%EB%82%B4%28%ED%8E%B8%EC%9D%98%EC%A0%90%2C+%EB%A7%A4%EC%9E%A5%29&srchDetailCnd=DETAILCND001&srchOrder=ORDER001&srchPagePer=20&srchDataRealmCode=&aihubDataSe=data&dataSetSn=71549)** | Moving, Selecting, Purchasing | Train: 35,119</br>Val: 4,267 |
+
+</br>
+
+### Model
+- **Epochs**: 100
+- **Batch Size**: 16
+- **Pretrained Model**: `yolov8n`
+    - Version: [Ultralytics YOLOv8 v8.0+](https://github.com/ultralytics/ultralytics)
+    - Lightweight YOLO model (`yolov8n.pt`) used as base
+
+</br>
+
+The detailed information about YOLO model is summarized in [YOLO repository](https://github.com/embedded-final-project-group-A/YOLO).
+
+</br>
+
+## 7. Page-Specific Features
 
 This project's application leverages YOLO technology to detect abnormal behavior in unmanned stores in real-time, providing store owners with instant notifications and evidence. Through the app's main features, store owners can manage their stores safely and efficiently.  
 
@@ -355,7 +381,7 @@ This project's application leverages YOLO technology to detect abnormal behavior
 
 </br>
 
-## 7. Role Distribution
+## 8. Role Distribution
 
 ### 👩🏻‍💻 **Yerim Choi**
 - **UI Design**: Sign Up, Sign In, Home, Notification, Events, Profile, Navigator
@@ -373,7 +399,7 @@ This project's application leverages YOLO technology to detect abnormal behavior
 
 </br>
 
-## 8. Future Plans
+## 9. Future Plans
 
 Our project, the YOLO-based unmanned store abnormal behavior detection system, aims for continuous development to provide users with more stable and convenient services. Although not yet implemented, the following are key features we plan to add through future development:
 

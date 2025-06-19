@@ -6,6 +6,10 @@
 
 # 🚨 스마트 무인매장: YOLO AI 이상행동 감지 & 알림상행동 감지 & 알림 앱
 
+<p align="center">
+  <img alt="어플리케이션" src="./images/application.gif" width="300"/>
+</p>
+
 ### **개발 기간**
 
 - **전체 개발 기간**: 2025.04.29 - 2025.06.19
@@ -228,7 +232,29 @@ iOS 시뮬레이터는 제공되지 않습니다.
 
 </br>
 
-## 6. 페이지별 기능
+## 6. YOLO 모델
+### Dataset
+| **Dataset** | **Classes** | **size** |
+| --- | --- | --- |
+| **[실내(편의점, 매장) 사람 이상행동 데이터](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&searchKeyword=%EC%8B%A4%EB%82%B4(%ED%8E%B8%EC%9D%98%EC%A0%90,%20%EB%A7%A4%EC%9E%A5)%20%EC%82%AC%EB%9E%8C%20%EC%9D%B4%EC%83%81%ED%96%89%EB%8F%99%20%EB%8D%B0%EC%9D%B4%ED%84%B0&aihubDataSe=data&dataSetSn=71550)** | Fall, Smoking, Theft, Fight | Train: 5,322</br>Val: 658 |
+| **[실내(편의점, 매장) 사람 구매행동 데이터](https://www.aihub.or.kr/aihubdata/data/view.do?pageIndex=1&currMenu=115&topMenu=100&srchOptnCnd=OPTNCND001&searchKeyword=%EC%8B%A4%EB%82%B4%28%ED%8E%B8%EC%9D%98%EC%A0%90%2C+%EB%A7%A4%EC%9E%A5%29&srchDetailCnd=DETAILCND001&srchOrder=ORDER001&srchPagePer=20&srchDataRealmCode=&aihubDataSe=data&dataSetSn=71549)** | Moving, Selecting, Purchasing | Train: 35,119</br>Val: 4,267 |
+
+</br>
+
+### Model
+- **Epochs**: 100
+- **Batch Size**: 16
+- **Pretrained Model**: `yolov8n`
+    - Version: [Ultralytics YOLOv8 v8.0+](https://github.com/ultralytics/ultralytics)
+    - Lightweight YOLO model (`yolov8n.pt`) used as base
+
+</br>
+
+YOLO 모델에 대한 더 자세한 정보는 [YOLO 레포지토리](https://github.com/embedded-final-project-group-A/YOLO)에 정리되어 있습니다. 
+
+</br>
+
+## 7. 페이지별 기능
 
 해당 프로젝트 앱은 YOLO 기술을 활용하여 무인 매장의 이상 행동을 실시간으로 감지하고, 매장 주인에게 즉각적인 알림과 증거를 제공하고 있습니다. 앱의 주요 기능들을 통해 매장을 안전하고 효율적으로 관리할 수 있습니다. 어플리케이션의 동작을 위해선 백엔드 서버가 구동중이어야 합니다. 백엔드 서버 구동 방법은 [CCTV_BE 레포지토리](https://github.com/embedded-final-project-group-A/CCTV_FE)를 참고하세요. 
 
@@ -354,7 +380,7 @@ iOS 시뮬레이터는 제공되지 않습니다.
 
 </br>
 
-## 7. 역할 분담
+## 8. 역할 분담
 
 ### 👩🏻‍💻 최예림
 
@@ -379,7 +405,7 @@ iOS 시뮬레이터는 제공되지 않습니다.
 
 </br>
 
-## 8. 향후 계획
+## 9. 향후 계획
 
 저희 프로젝트는 YOLO 기반의 무인 매장 이상 행동 감지 시스템으로서, 사용자에게 더욱 안정적이고 편리한 서비스를 제공하기 위해 지속적인 발전을 추구하고 있습니다. 현재 구현되지 않았지만, 향후 개발을 통해 추가하고자 하는 주요 기능들은 다음과 같습니다. 
 
