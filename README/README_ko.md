@@ -18,6 +18,15 @@
 
 </br>
 
+
+### 프로젝트 소개
+
+- **youtube**: [embedded system class 2 - Team A](https://youtu.be/p4cOnneUFwk)
+
+- **PPT**: [Project Proposal](./Project_Proposal.pptx)
+
+</br>
+
 백엔드 서버와 관련된 더 자세한 내용은 [CCTV_BE 레포지토리](https://github.com/embedded-final-project-group-A/CCTV_BE)에 정리되어 있습니다. 
 
 이번 프로젝트에서 사용된 YOLO 모델에 대한 정보는 [YOLO 레포지토리](https://github.com/embedded-final-project-group-A/YOLO)에 정리되어 있습니다. 

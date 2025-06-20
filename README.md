@@ -18,6 +18,15 @@
 
 </br>
 
+### Project Introduction
+
+- **youtube**: [embedded system class 2 - Team A](https://youtu.be/p4cOnneUFwk)
+
+- **PPT**: [Project Proposal](./README/Project_Proposal.pptx)
+
+
+</br>
+
 Details regarding the backend server can be found in the [CCTV_BE repository](https://github.com/embedded-final-project-group-A/CCTV_BE).
 
 Information about the YOLO model used in this project is available in the [YOLO repository](https://github.com/embedded-final-project-group-A/YOLO).
